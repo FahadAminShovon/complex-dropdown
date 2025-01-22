@@ -20,30 +20,27 @@ const dummyData: OptionType[] = [
         value: 'sub value 1',
         category: 'category 3',
       },
+      {
+        label: 'sub label 2',
+        value: 'sub value 2',
+        category: 'category 3',
+      },
+      {
+        label: 'sub label 2',
+        value: 'sub value 3',
+        category: 'category k',
+      },
     ],
   },
   {
     label: 'label 2',
     value: 'value 2',
     category: 'category 1',
-    subMenu: [
-      {
-        label: 'sub label 1',
-        value: 'sub value 1',
-        category: 'category 3',
-      },
-    ],
   },
   {
     label: 'label 3',
     value: 'value 3',
     category: 'category 2',
-    subMenu: [
-      {
-        label: 'sub label 1',
-        value: 'sub value 1',
-      },
-    ],
   },
 ];
 

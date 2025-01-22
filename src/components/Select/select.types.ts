@@ -11,7 +11,10 @@ export type MenuSubMenuHandlerProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = {
-  onSubMenuContainerClick: (option: TOption) => void;
+  onSubMenuContainerClick: (_obj: {
+    subMenu: TOption[];
+    menu: TOption;
+  }) => void;
   onGoBackClick: () => void;
 };
 

@@ -1,6 +1,7 @@
 'use client';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useState } from 'react';
+import { DropDownContextProvider } from './DropDownContextProvider';
 import type { MultiSelectProps } from './MultiSelect';
 import MultiSelect from './MultiSelect';
 import type { SingleSelectProps } from './SingleSelect';
@@ -8,6 +9,7 @@ import SingleSelect from './SingleSelect';
 import type {
   CommonSelectProps,
   DropDownDataType,
+  MenuSubMenuHandlerProps,
   ObjectType,
 } from './select.types';
 
@@ -31,33 +33,57 @@ const Select = <
     menu: null,
     subMenu: options,
   });
+  const [isOpen, setIsOpen] = useState(false);
+  const openDropDown = () => setIsOpen(true);
+  const closeDropDown = () => setIsOpen(false);
 
-  const onSubMenuContainerClick = (option: TOption) => {
-    console.log('option', option);
+  const onSubMenuContainerClick: MenuSubMenuHandlerProps<
+    TData,
+    TOption
+  >['onSubMenuContainerClick'] = ({ menu, subMenu }) => {
+    setSelectedOptions({
+      menu,
+      subMenu,
+    });
   };
 
-  const onGoBackClick = () => {
-    console.log('onGoBackClick');
+  const onGoBackClick: MenuSubMenuHandlerProps<
+    TData,
+    TOption
+  >['onGoBackClick'] = () => {
+    setSelectedOptions({
+      menu: null,
+      subMenu: options,
+    });
   };
+
   return (
-    <DropdownMenuPrimitive.Root>
-      {props.multiple && (
-        <MultiSelect
-          {...props}
-          options={selectedOptions.subMenu}
-          onSubMenuContainerClick={onSubMenuContainerClick}
-          onGoBackClick={onGoBackClick}
-        />
-      )}
-      {!props.multiple && (
-        <SingleSelect
-          {...props}
-          options={selectedOptions.subMenu}
-          onSubMenuContainerClick={onSubMenuContainerClick}
-          onGoBackClick={onGoBackClick}
-        />
-      )}
-    </DropdownMenuPrimitive.Root>
+    <DropDownContextProvider
+      menu={selectedOptions.menu}
+      subMenu={selectedOptions.subMenu}
+      isOpen={isOpen}
+      openDropDown={openDropDown}
+      closeDropDown={closeDropDown}
+    >
+      <DropdownMenuPrimitive.Root open={isOpen}>
+        {props.multiple && (
+          <MultiSelect
+            {...props}
+            options={selectedOptions.subMenu}
+            onSubMenuContainerClick={onSubMenuContainerClick}
+            onGoBackClick={onGoBackClick}
+          />
+        )}
+        {!props.multiple && (
+          <SingleSelect
+            {...props}
+            options={selectedOptions.subMenu}
+            onSubMenuContainerClick={onSubMenuContainerClick}
+            onGoBackClick={onGoBackClick}
+          />
+        )}
+      </DropdownMenuPrimitive.Root>
+    </DropDownContextProvider>
   );
 };
 

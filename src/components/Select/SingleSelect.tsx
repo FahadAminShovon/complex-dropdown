@@ -1,5 +1,6 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
+import { useDropDownContext } from './DropDownContextProvider';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
 import type {
@@ -31,12 +32,16 @@ const SingleSelect = <
   const isSelectedFn = (option: TOption) => {
     return getOptionKey(option) === getOptionKey(value);
   };
+  const { closeDropDown } = useDropDownContext();
   return (
     <>
       <SelectTrigger renderTrigger={renderTrigger} />
       <DropDownItemsWrapper
         {...props}
-        onItemClick={props.setValue}
+        onItemClick={(...args) => {
+          props.setValue(...args);
+          closeDropDown();
+        }}
         getOptionKey={getOptionKey}
         isSelectedFn={isSelectedFn}
       />

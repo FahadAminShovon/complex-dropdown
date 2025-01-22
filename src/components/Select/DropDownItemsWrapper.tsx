@@ -3,6 +3,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import React from 'react';
 import { cn } from '../../../lib/utils';
+import { useDropDownContext } from './DropDownContextProvider';
 import type {
   DropDownDataType,
   MenuSubMenuHandlerProps,
@@ -53,8 +54,8 @@ const DropDownItems = <
   onItemClick: handleItemClick,
   isSelectedFn,
   onSubMenuContainerClick,
-  onGoBackClick,
 }: DropDownItemProps<TData, TOption>) => {
+  const { menu } = useDropDownContext();
   return (
     <>
       {options.map((option) => {
@@ -63,7 +64,14 @@ const DropDownItems = <
           <DropdownMenuPrimitive.Item
             key={getOptionKey(option)}
             onClick={() => {
-              handleItemClick(option);
+              if (option.subMenu) {
+                onSubMenuContainerClick({
+                  menu: option,
+                  subMenu: option.subMenu as any,
+                });
+                return;
+              }
+              handleItemClick({ ...option, menu });
             }}
             asChild
           >
@@ -94,8 +102,9 @@ const DropDownItemsWrapper = <
     'onItemClick' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onGoBackClick'
   >) => {
   const [search, setSearch] = useState('');
-
+  const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
+  const { closeDropDown } = useDropDownContext();
 
   const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
@@ -135,13 +144,24 @@ const DropDownItemsWrapper = <
 
   return (
     <DropdownMenuPrimitive.Portal>
-      <DropdownMenuPrimitive.Content sideOffset={5}>
+      <DropdownMenuPrimitive.Content
+        sideOffset={5}
+        onPointerDownOutside={(e) => {
+          e.preventDefault();
+          closeDropDown();
+        }}
+      >
         {props.search && (
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+        )}
+        {menu && (
+          <button onClick={() => onGoBackClick()} type="button">
+            back
+          </button>
         )}
         {Array.isArray(groupedOptions) ? (
           <DropDownItems
