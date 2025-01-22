@@ -2,21 +2,33 @@
 import type { Dispatch, SetStateAction } from 'react';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
-import type { CommonSelectProps, ObjectType } from './select.types';
+import type {
+  CommonSelectProps,
+  DropDownDataType,
+  MenuSubMenuHandlerProps,
+  ObjectType,
+} from './select.types';
 
-export type SingleSelectProps<T extends ObjectType> = CommonSelectProps<T> & {
+export type SingleSelectProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = CommonSelectProps<TData, TOption> & {
   multiple?: false | never;
-  value: T;
-  setValue: Dispatch<SetStateAction<T>>;
+  value: TOption;
+  setValue: Dispatch<SetStateAction<TOption>>;
 };
 
-const SingleSelect = <T extends ObjectType>({
+const SingleSelect = <
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+>({
   renderTrigger,
   value,
   getOptionKey,
   ...props
-}: SingleSelectProps<T>) => {
-  const isSelectedFn = (option: T) => {
+}: SingleSelectProps<TData, TOption> &
+  MenuSubMenuHandlerProps<TData, TOption>) => {
+  const isSelectedFn = (option: TOption) => {
     return getOptionKey(option) === getOptionKey(value);
   };
   return (

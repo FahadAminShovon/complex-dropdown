@@ -6,7 +6,7 @@ type OptionType = {
   label: string;
   value: string;
   category?: string;
-  subCategory: Omit<OptionType, 'subCategory'>[];
+  subMenu?: OptionType[];
 };
 
 const dummyData: OptionType[] = [
@@ -14,7 +14,7 @@ const dummyData: OptionType[] = [
     label: 'label 1',
     value: 'value 1',
     category: 'category 1',
-    subCategory: [
+    subMenu: [
       {
         label: 'sub label 1',
         value: 'sub value 1',
@@ -26,7 +26,7 @@ const dummyData: OptionType[] = [
     label: 'label 2',
     value: 'value 2',
     category: 'category 1',
-    subCategory: [
+    subMenu: [
       {
         label: 'sub label 1',
         value: 'sub value 1',
@@ -38,7 +38,7 @@ const dummyData: OptionType[] = [
     label: 'label 3',
     value: 'value 3',
     category: 'category 2',
-    subCategory: [
+    subMenu: [
       {
         label: 'sub label 1',
         value: 'sub value 1',

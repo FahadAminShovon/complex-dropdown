@@ -2,21 +2,33 @@
 import type { Dispatch, SetStateAction } from 'react';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
-import type { CommonSelectProps, ObjectType } from './select.types';
+import type {
+  CommonSelectProps,
+  DropDownDataType,
+  MenuSubMenuHandlerProps,
+  ObjectType,
+} from './select.types';
 
-export type MultiSelectProps<T extends ObjectType> = CommonSelectProps<T> & {
+export type MultiSelectProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = CommonSelectProps<TData, TOption> & {
   multiple: true;
-  values: T[];
-  setValues: Dispatch<SetStateAction<T[]>>;
+  values: TOption[];
+  setValues: Dispatch<SetStateAction<TOption[]>>;
 };
 
-const MultiSelect = <T extends ObjectType>({
+const MultiSelect = <
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+>({
   renderTrigger,
   values,
   getOptionKey,
   ...props
-}: MultiSelectProps<T>) => {
-  const handleItemClick = (option: T) => {
+}: MultiSelectProps<TData, TOption> &
+  MenuSubMenuHandlerProps<TData, TOption>) => {
+  const handleItemClick = (option: TOption) => {
     const isSelected = values.some(
       (value) => getOptionKey(value) === getOptionKey(option),
     );
@@ -29,7 +41,7 @@ const MultiSelect = <T extends ObjectType>({
     props.setValues([...values, option]);
   };
 
-  const isSelectedFn = (option: T) => {
+  const isSelectedFn = (option: TOption) => {
     return values.some((value) => getOptionKey(value) === getOptionKey(option));
   };
 

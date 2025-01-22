@@ -3,7 +3,11 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import React from 'react';
 import { cn } from '../../../lib/utils';
-import type { ObjectType } from './select.types';
+import type {
+  DropDownDataType,
+  MenuSubMenuHandlerProps,
+  ObjectType,
+} from './select.types';
 
 type SearchByFn<T extends ObjectType> = (obj: {
   option: T;
@@ -12,31 +16,45 @@ type SearchByFn<T extends ObjectType> = (obj: {
 }) => boolean;
 
 type GroupByFn<T extends ObjectType> = (option: T) => string;
-export type DropDownItemsWrapperProps<T extends ObjectType> = {
-  options: T[];
-  getOptionKey: (option: T) => string;
-  groupBy?: GroupByFn<T>;
+export type DropDownItemsWrapperProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = {
+  options: TOption[];
+  getOptionKey: (option: TOption) => string;
+  groupBy?: GroupByFn<TOption>;
 } & (
   | {
       search: true;
-      searchBy: SearchByFn<T>;
+      searchBy: SearchByFn<TOption>;
     }
   | {
       search?: false | never;
     }
 );
 
-type DropDownItemProps<T extends ObjectType> = Pick<
-  DropDownItemsWrapperProps<T>,
+type DropDownItemProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = Pick<
+  DropDownItemsWrapperProps<TData, TOption>,
   'options' | 'getOptionKey'
-> & { onItemClick: (option: T) => void; isSelectedFn: (option: T) => boolean };
+> & {
+  onItemClick: (option: TOption) => void;
+  isSelectedFn: (option: TOption) => boolean;
+} & MenuSubMenuHandlerProps<TData, TOption>;
 
-const DropDownItems = <T extends ObjectType>({
+const DropDownItems = <
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+>({
   options,
   getOptionKey,
   onItemClick: handleItemClick,
   isSelectedFn,
-}: DropDownItemProps<T>) => {
+  onSubMenuContainerClick,
+  onGoBackClick,
+}: DropDownItemProps<TData, TOption>) => {
   return (
     <>
       {options.map((option) => {
@@ -59,19 +77,27 @@ const DropDownItems = <T extends ObjectType>({
   );
 };
 
-const DropDownItemsWrapper = <T extends ObjectType>({
+const DropDownItemsWrapper = <
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+>({
   options,
   getOptionKey,
   onItemClick: handleItemClick,
   isSelectedFn,
+  onSubMenuContainerClick,
+  onGoBackClick,
   ...props
-}: DropDownItemsWrapperProps<T> &
-  Pick<DropDownItemProps<T>, 'onItemClick' | 'isSelectedFn'>) => {
+}: DropDownItemsWrapperProps<TData, TOption> &
+  Pick<
+    DropDownItemProps<TData, TOption>,
+    'onItemClick' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onGoBackClick'
+  >) => {
   const [search, setSearch] = useState('');
 
   const deferredSearch = useDeferredValue(search);
 
-  const searchFnRef = useRef<SearchByFn<T> | null>(null);
+  const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
   // doesn't expect searchBy function to be memoized
   useEffect(() => {
@@ -103,7 +129,7 @@ const DropDownItemsWrapper = <T extends ObjectType>({
         acc[group] = [...(acc[group] || []), option];
         return acc;
       },
-      {} as Record<string, T[]>,
+      {} as Record<string, TOption[]>,
     );
   }, [filteredOptions, props.groupBy]);
 
@@ -119,10 +145,12 @@ const DropDownItemsWrapper = <T extends ObjectType>({
         )}
         {Array.isArray(groupedOptions) ? (
           <DropDownItems
+            onSubMenuContainerClick={onSubMenuContainerClick}
             options={groupedOptions}
             getOptionKey={getOptionKey}
             onItemClick={handleItemClick}
             isSelectedFn={isSelectedFn}
+            onGoBackClick={onGoBackClick}
           />
         ) : (
           Object.entries(groupedOptions).map(([group, options]) => (
@@ -133,11 +161,13 @@ const DropDownItemsWrapper = <T extends ObjectType>({
                 </DropdownMenuPrimitive.Label>
               )}
               <DropDownItems
+                onSubMenuContainerClick={onSubMenuContainerClick}
                 key={group}
                 options={options}
                 getOptionKey={getOptionKey}
                 onItemClick={handleItemClick}
                 isSelectedFn={isSelectedFn}
+                onGoBackClick={onGoBackClick}
               />
             </React.Fragment>
           ))
