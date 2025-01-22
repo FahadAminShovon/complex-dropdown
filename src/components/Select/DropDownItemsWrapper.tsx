@@ -2,7 +2,6 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import React from 'react';
-import { cn } from '../../../lib/utils';
 import { useDropDownContext } from './DropDownContextProvider';
 import type {
   DropDownDataType,
@@ -24,6 +23,12 @@ export type DropDownItemsWrapperProps<
   options: TOption[];
   getOptionKey: (option: TOption) => string;
   groupBy?: GroupByFn<TOption>;
+  renderMenu: (menu: TOption | null) => React.ReactNode;
+  renderGroupText?: (group: string) => React.ReactNode;
+  renderItem: (_obj: {
+    option: TOption;
+    isSelected: boolean;
+  }) => React.ReactNode;
 } & (
   | {
       search: true;
@@ -39,7 +44,7 @@ type DropDownItemProps<
   TOption extends DropDownDataType<TData>,
 > = Pick<
   DropDownItemsWrapperProps<TData, TOption>,
-  'options' | 'getOptionKey'
+  'options' | 'getOptionKey' | 'renderItem'
 > & {
   onItemClick: (option: TOption) => void;
   isSelectedFn: (option: TOption) => boolean;
@@ -54,6 +59,7 @@ const DropDownItems = <
   onItemClick: handleItemClick,
   isSelectedFn,
   onSubMenuContainerClick,
+  renderItem,
 }: DropDownItemProps<TData, TOption>) => {
   const { menu } = useDropDownContext();
   return (
@@ -75,9 +81,7 @@ const DropDownItems = <
             }}
             asChild
           >
-            <div className={cn({ 'bg-green-200': isOptionSelected })}>
-              {JSON.stringify(option)}
-            </div>
+            {renderItem({ option, isSelected: isOptionSelected })}
           </DropdownMenuPrimitive.Item>
         );
       })}
@@ -95,6 +99,9 @@ const DropDownItemsWrapper = <
   isSelectedFn,
   onSubMenuContainerClick,
   onGoBackClick,
+  renderMenu,
+  renderItem,
+  renderGroupText,
   ...props
 }: DropDownItemsWrapperProps<TData, TOption> &
   Pick<
@@ -152,16 +159,20 @@ const DropDownItemsWrapper = <
         }}
       >
         {props.search && (
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <DropdownMenuPrimitive.Item asChild>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </DropdownMenuPrimitive.Item>
         )}
         {menu && (
-          <button onClick={() => onGoBackClick()} type="button">
-            back
-          </button>
+          <DropdownMenuPrimitive.Item asChild>
+            <button onClick={onGoBackClick} type="button" className="block">
+              {renderMenu(menu as TOption)}
+            </button>
+          </DropdownMenuPrimitive.Item>
         )}
         {Array.isArray(groupedOptions) ? (
           <DropDownItems
@@ -171,13 +182,14 @@ const DropDownItemsWrapper = <
             onItemClick={handleItemClick}
             isSelectedFn={isSelectedFn}
             onGoBackClick={onGoBackClick}
+            renderItem={renderItem}
           />
         ) : (
           Object.entries(groupedOptions).map(([group, options]) => (
             <React.Fragment key={group}>
               {group && (
-                <DropdownMenuPrimitive.Label>
-                  {group}
+                <DropdownMenuPrimitive.Label asChild={!!renderGroupText}>
+                  {renderGroupText?.(group) ?? group}
                 </DropdownMenuPrimitive.Label>
               )}
               <DropDownItems
@@ -188,6 +200,7 @@ const DropDownItemsWrapper = <
                 onItemClick={handleItemClick}
                 isSelectedFn={isSelectedFn}
                 onGoBackClick={onGoBackClick}
+                renderItem={renderItem}
               />
             </React.Fragment>
           ))

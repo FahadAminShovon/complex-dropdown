@@ -1,6 +1,6 @@
 'use client';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DropDownContextProvider } from './DropDownContextProvider';
 import type { MultiSelectProps } from './MultiSelect';
 import MultiSelect from './MultiSelect';
@@ -36,6 +36,15 @@ const Select = <
   const [isOpen, setIsOpen] = useState(false);
   const openDropDown = () => setIsOpen(true);
   const closeDropDown = () => setIsOpen(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedOptions({
+        menu: null,
+        subMenu: options,
+      });
+    }
+  }, [isOpen, options]);
 
   const onSubMenuContainerClick: MenuSubMenuHandlerProps<
     TData,
