@@ -33,18 +33,21 @@ const SingleSelect = <
     return getOptionKey(option) === getOptionKey(value);
   };
   const { closeDropDown } = useDropDownContext();
+  const { isOpen } = useDropDownContext();
   return (
     <>
       <SelectTrigger renderTrigger={renderTrigger} />
-      <DropDownItemsWrapper
-        {...props}
-        onItemClick={(...args) => {
-          props.setValue(...args);
-          closeDropDown();
-        }}
-        getOptionKey={getOptionKey}
-        isSelectedFn={isSelectedFn}
-      />
+      {isOpen && (
+        <DropDownItemsWrapper
+          {...props}
+          onItemClick={(...args) => {
+            props.setValue(...args);
+            closeDropDown();
+          }}
+          getOptionKey={getOptionKey}
+          isSelectedFn={isSelectedFn}
+        />
+      )}
     </>
   );
 };

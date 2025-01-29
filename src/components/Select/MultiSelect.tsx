@@ -1,5 +1,6 @@
 'use client';
 import type { Dispatch, SetStateAction } from 'react';
+import { useDropDownContext } from './DropDownContextProvider';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
 import type {
@@ -45,15 +46,19 @@ const MultiSelect = <
     return values.some((value) => getOptionKey(value) === getOptionKey(option));
   };
 
+  const { isOpen } = useDropDownContext();
+
   return (
     <>
       <SelectTrigger renderTrigger={renderTrigger} />
-      <DropDownItemsWrapper
-        {...props}
-        onItemClick={handleItemClick}
-        getOptionKey={getOptionKey}
-        isSelectedFn={isSelectedFn}
-      />
+      {isOpen && (
+        <DropDownItemsWrapper
+          {...props}
+          onItemClick={handleItemClick}
+          getOptionKey={getOptionKey}
+          isSelectedFn={isSelectedFn}
+        />
+      )}
     </>
   );
 };

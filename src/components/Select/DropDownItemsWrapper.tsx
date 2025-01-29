@@ -1,5 +1,6 @@
 'use client';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import React from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
@@ -112,6 +113,7 @@ const DropDownItemsWrapper = <
   const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
+  const parentRef = React.useRef<HTMLDivElement>(null);
 
   const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
@@ -149,6 +151,20 @@ const DropDownItemsWrapper = <
     );
   }, [filteredOptions, props.groupBy]);
 
+  const itemCount = Array.isArray(groupedOptions)
+    ? groupedOptions.length
+    : Object.keys(groupedOptions).reduce((acc, group) => {
+        return acc + groupedOptions[group].length;
+      }, 0) + Object.keys(groupedOptions).length;
+
+  const rowVirtualizer = useVirtualizer({
+    count: itemCount,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+  });
+
+  const _items = rowVirtualizer.getVirtualItems();
+
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -174,37 +190,46 @@ const DropDownItemsWrapper = <
             </button>
           </DropdownMenuPrimitive.Item>
         )}
-        {Array.isArray(groupedOptions) ? (
-          <DropDownItems
-            onSubMenuContainerClick={onSubMenuContainerClick}
-            options={groupedOptions}
-            getOptionKey={getOptionKey}
-            onItemClick={handleItemClick}
-            isSelectedFn={isSelectedFn}
-            onGoBackClick={onGoBackClick}
-            renderItem={renderItem}
-          />
-        ) : (
-          Object.entries(groupedOptions).map(([group, options]) => (
-            <React.Fragment key={group}>
-              {group && (
-                <DropdownMenuPrimitive.Label asChild={!!renderGroupText}>
-                  {renderGroupText?.(group) ?? group}
-                </DropdownMenuPrimitive.Label>
-              )}
+        <div className="bg-red-300 h-[400px] overflow-auto" ref={parentRef}>
+          <div
+            className="w-full relative"
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+            }}
+          >
+            {Array.isArray(groupedOptions) ? (
               <DropDownItems
                 onSubMenuContainerClick={onSubMenuContainerClick}
-                key={group}
-                options={options}
+                options={groupedOptions}
                 getOptionKey={getOptionKey}
                 onItemClick={handleItemClick}
                 isSelectedFn={isSelectedFn}
                 onGoBackClick={onGoBackClick}
                 renderItem={renderItem}
               />
-            </React.Fragment>
-          ))
-        )}
+            ) : (
+              Object.entries(groupedOptions).map(([group, options]) => (
+                <React.Fragment key={group}>
+                  {group && (
+                    <DropdownMenuPrimitive.Label asChild={!!renderGroupText}>
+                      {renderGroupText?.(group) ?? group}
+                    </DropdownMenuPrimitive.Label>
+                  )}
+                  <DropDownItems
+                    onSubMenuContainerClick={onSubMenuContainerClick}
+                    key={group}
+                    options={options}
+                    getOptionKey={getOptionKey}
+                    onItemClick={handleItemClick}
+                    isSelectedFn={isSelectedFn}
+                    onGoBackClick={onGoBackClick}
+                    renderItem={renderItem}
+                  />
+                </React.Fragment>
+              ))
+            )}
+          </div>
+        </div>
 
         <DropdownMenuPrimitive.Arrow />
       </DropdownMenuPrimitive.Content>
