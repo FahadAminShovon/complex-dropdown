@@ -21,6 +21,7 @@ export type DropDownItemsWrapperProps<
     option: TOption;
     isSelected: boolean;
   }) => React.ReactNode;
+  virtualize?: boolean;
 } & (
   | {
       search: true;
@@ -65,3 +66,28 @@ export type CommonSelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = SelectTriggerProps & DropDownItemsWrapperProps<TData, TOption>;
+
+export type VirtualItemsProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = {
+  groupedOptions: TOption[] | Record<string, TOption[]>;
+} & Pick<
+  DropDownItemProps<TData, TOption>,
+  'renderItem' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onItemClick'
+> &
+  Pick<DropDownItemsWrapperProps<TData, TOption>, 'renderGroupText'>;
+
+export type NonVirtualItemsProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = Pick<
+  VirtualItemsProps<TData, TOption>,
+  | 'groupedOptions'
+  | 'onSubMenuContainerClick'
+  | 'onItemClick'
+  | 'isSelectedFn'
+  | 'renderItem'
+  | 'renderGroupText'
+> &
+  Pick<DropDownItemsWrapperProps<TData, TOption>, 'getOptionKey'>;

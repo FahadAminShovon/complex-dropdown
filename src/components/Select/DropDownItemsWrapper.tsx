@@ -2,7 +2,8 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
-import VirtualItems from './VirtualItems';
+import NonVirtualDropdownItems from './NonVirtualDropdownItems';
+import VirtualDropdownItems from './VirtualDropdownItems';
 import type {
   DropDownDataType,
   DropDownItemProps,
@@ -24,6 +25,7 @@ const DropDownItemsWrapper = <
   renderMenu,
   renderItem,
   renderGroupText,
+  virtualize,
   ...props
 }: DropDownItemsWrapperProps<TData, TOption> &
   Pick<
@@ -34,6 +36,7 @@ const DropDownItemsWrapper = <
   const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
+
   const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
   // doesn't expect searchBy function to be memoized
@@ -78,7 +81,6 @@ const DropDownItemsWrapper = <
           e.preventDefault();
           closeDropDown();
         }}
-        className="rounded-sm overflow-clip shadow-sm"
       >
         {props.search && (
           <DropdownMenuPrimitive.Item asChild>
@@ -97,14 +99,25 @@ const DropDownItemsWrapper = <
             </button>
           </DropdownMenuPrimitive.Item>
         )}
-        <VirtualItems
-          groupedOptions={groupedOptions}
-          renderItem={renderItem}
-          isSelectedFn={isSelectedFn}
-          onSubMenuContainerClick={onSubMenuContainerClick}
-          renderGroupText={renderGroupText}
-          onItemClick={handleItemClick}
-        />
+        {virtualize && (
+          <VirtualDropdownItems
+            groupedOptions={groupedOptions}
+            renderItem={renderItem}
+            isSelectedFn={isSelectedFn}
+            onSubMenuContainerClick={onSubMenuContainerClick}
+            onItemClick={handleItemClick}
+          />
+        )}
+        {!virtualize && (
+          <NonVirtualDropdownItems
+            groupedOptions={groupedOptions}
+            onSubMenuContainerClick={onSubMenuContainerClick}
+            onItemClick={handleItemClick}
+            isSelectedFn={isSelectedFn}
+            renderItem={renderItem}
+            getOptionKey={getOptionKey}
+          />
+        )}
         <DropdownMenuPrimitive.Arrow />
       </DropdownMenuPrimitive.Content>
     </DropdownMenuPrimitive.Portal>

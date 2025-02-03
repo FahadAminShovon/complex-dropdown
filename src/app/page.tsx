@@ -80,6 +80,7 @@ export default function Home() {
           )}
         </div>
         <Select
+          virtualize
           options={dummyData}
           multiple={false}
           value={value}
@@ -128,6 +129,7 @@ export default function Home() {
           values={values}
           // search={true}
           // searchBy={({ option, search }) => option.label.includes(search)}
+          virtualize
           setValues={setValues}
           getOptionKey={(option) => option.value}
           groupBy={(option) => option.category ?? ''}

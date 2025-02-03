@@ -1,39 +1,27 @@
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import React, { useMemo } from 'react';
-import { useDropDownContext } from './DropDownContextProvider';
+import { DropDownItem } from './DropdownItem';
+import DropdownLabel from './DropdownLabel';
 import type {
   DropDownDataType,
-  DropDownItemProps,
-  DropDownItemsWrapperProps,
   ObjectType,
+  VirtualItemsProps,
 } from './select.types';
 
-type VirtualItemsProps<
-  TData extends ObjectType,
-  TOption extends DropDownDataType<TData>,
-> = {
-  groupedOptions: TOption[] | Record<string, TOption[]>;
-} & Pick<
-  DropDownItemProps<TData, TOption>,
-  'renderItem' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onItemClick'
-> &
-  Pick<DropDownItemsWrapperProps<TData, TOption>, 'renderGroupText'>;
-
 const dropdownItemCommonClassName = 'absolute top-0 left-0 right-0 w-full';
+export const itemsWrapperClassName =
+  'bg-red-300 h-[400px] overflow-auto min-w-40';
 
-const VirtualItems = <
+const VirtualDropdownItems = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 >({
   groupedOptions,
   renderItem,
   isSelectedFn,
-  onSubMenuContainerClick,
   renderGroupText,
-  onItemClick: handleItemClick,
+  ...props
 }: VirtualItemsProps<TData, TOption>) => {
-  const { menu } = useDropDownContext();
   const parentRef = React.useRef<HTMLDivElement>(null);
   const groupIndexes = useMemo(() => {
     const groupIndexSet = new Set<number>();
@@ -72,10 +60,7 @@ const VirtualItems = <
   });
 
   return (
-    <div
-      className="bg-red-300 h-[400px] overflow-auto min-w-40"
-      ref={parentRef}
-    >
+    <div className={itemsWrapperClassName} ref={parentRef}>
       {/* The large inner element to hold all of the items */}
       <div
         className="w-full relative"
@@ -88,49 +73,38 @@ const VirtualItems = <
           const option = flatOptions[virtualItem.index];
           if (groupIndexes.has(virtualItem.index)) {
             return (
-              <DropdownMenuPrimitive.Label
-                asChild={!!renderGroupText}
+              <DropdownLabel
                 key={virtualItem.key}
-                data-index={virtualItem.index}
-                ref={rowVirtualizer.measureElement}
+                fRef={rowVirtualizer.measureElement}
+                label={option.label}
+                dataIndex={virtualItem.index}
+                renderGroupText={renderGroupText}
                 className={dropdownItemCommonClassName}
                 style={{
                   transform: `translateY(${
                     virtualItem.start - rowVirtualizer.options.scrollMargin
                   }px)`,
                 }}
-              >
-                {renderGroupText?.(option.label) ?? option.label}
-              </DropdownMenuPrimitive.Label>
+              />
             );
           }
-
           const isOptionSelected = isSelectedFn(option);
           return (
-            <DropdownMenuPrimitive.Item
-              ref={rowVirtualizer.measureElement}
+            <DropDownItem
+              fRef={rowVirtualizer.measureElement}
               key={virtualItem.key}
-              data-index={virtualItem.index}
+              dataIndex={virtualItem.index}
               className={dropdownItemCommonClassName}
+              isOptionSelected={isOptionSelected}
+              option={option}
+              renderItem={renderItem}
               style={{
                 transform: `translateY(${
                   virtualItem.start - rowVirtualizer.options.scrollMargin
                 }px)`,
               }}
-              onClick={() => {
-                if (option.subMenu) {
-                  onSubMenuContainerClick({
-                    menu: option,
-                    subMenu: option.subMenu as any,
-                  });
-                  return;
-                }
-                handleItemClick({ ...option, menu });
-              }}
-              asChild
-            >
-              {renderItem({ option, isSelected: isOptionSelected })}
-            </DropdownMenuPrimitive.Item>
+              {...props}
+            />
           );
         })}
       </div>
@@ -138,4 +112,4 @@ const VirtualItems = <
   );
 };
 
-export default VirtualItems;
+export default VirtualDropdownItems;
