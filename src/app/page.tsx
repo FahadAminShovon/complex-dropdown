@@ -44,6 +44,11 @@ const dummyData: OptionType[] = [
     value: 'value 3',
     category: 'category 2',
   },
+  {
+    label: 'label 4',
+    value: 'value 4',
+    category: 'category 3',
+  },
 ];
 
 export default function Home() {

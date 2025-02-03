@@ -49,7 +49,9 @@ type DropDownItemProps<
 > & {
   onItemClick: (option: TOption) => void;
   isSelectedFn: (option: TOption) => boolean;
-} & MenuSubMenuHandlerProps<TData, TOption>;
+} & MenuSubMenuHandlerProps<TData, TOption> & {
+    fRef?: React.Ref<HTMLDivElement>;
+  };
 
 const DropDownItems = <
   TData extends ObjectType,
@@ -61,6 +63,7 @@ const DropDownItems = <
   isSelectedFn,
   onSubMenuContainerClick,
   renderItem,
+  fRef,
 }: DropDownItemProps<TData, TOption>) => {
   const { menu } = useDropDownContext();
   return (
@@ -69,6 +72,7 @@ const DropDownItems = <
         const isOptionSelected = isSelectedFn(option);
         return (
           <DropdownMenuPrimitive.Item
+            ref={fRef}
             key={getOptionKey(option)}
             onClick={() => {
               if (option.subMenu) {
@@ -114,7 +118,6 @@ const DropDownItemsWrapper = <
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
   const parentRef = React.useRef<HTMLDivElement>(null);
-
   const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
   // doesn't expect searchBy function to be memoized
@@ -163,7 +166,35 @@ const DropDownItemsWrapper = <
     estimateSize: () => 35,
   });
 
-  const _items = rowVirtualizer.getVirtualItems();
+  const groupIndexes = useMemo(() => {
+    const groupIndexSet = new Set<number>();
+    if (Array.isArray(groupedOptions)) {
+      return groupIndexSet;
+    }
+
+    let counter = 0;
+    for (const group of Object.keys(groupedOptions)) {
+      groupIndexSet.add(counter);
+      // +1 for the group label
+      counter += groupedOptions[group].length + 1;
+    }
+
+    return groupIndexSet;
+  }, [groupedOptions]);
+
+  const flatOptions = useMemo(() => {
+    if (Array.isArray(groupedOptions)) {
+      return groupedOptions;
+    }
+
+    const flatOptions = [];
+    for (const group of Object.keys(groupedOptions)) {
+      flatOptions.push({ label: group, value: group });
+      flatOptions.push(...groupedOptions[group]);
+    }
+
+    return flatOptions as TOption[];
+  }, [groupedOptions]);
 
   return (
     <DropdownMenuPrimitive.Portal>
@@ -217,7 +248,6 @@ const DropDownItemsWrapper = <
                   )}
                   <DropDownItems
                     onSubMenuContainerClick={onSubMenuContainerClick}
-                    key={group}
                     options={options}
                     getOptionKey={getOptionKey}
                     onItemClick={handleItemClick}
