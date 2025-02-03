@@ -53,47 +53,6 @@ type DropDownItemProps<
     fRef?: React.Ref<HTMLDivElement>;
   };
 
-const DropDownItems = <
-  TData extends ObjectType,
-  TOption extends DropDownDataType<TData>,
->({
-  options,
-  getOptionKey,
-  onItemClick: handleItemClick,
-  isSelectedFn,
-  onSubMenuContainerClick,
-  renderItem,
-  fRef,
-}: DropDownItemProps<TData, TOption>) => {
-  const { menu } = useDropDownContext();
-  return (
-    <>
-      {options.map((option) => {
-        const isOptionSelected = isSelectedFn(option);
-        return (
-          <DropdownMenuPrimitive.Item
-            ref={fRef}
-            key={getOptionKey(option)}
-            onClick={() => {
-              if (option.subMenu) {
-                onSubMenuContainerClick({
-                  menu: option,
-                  subMenu: option.subMenu as any,
-                });
-                return;
-              }
-              handleItemClick({ ...option, menu });
-            }}
-            asChild
-          >
-            {renderItem({ option, isSelected: isOptionSelected })}
-          </DropdownMenuPrimitive.Item>
-        );
-      })}
-    </>
-  );
-};
-
 const DropDownItemsWrapper = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -154,18 +113,6 @@ const DropDownItemsWrapper = <
     );
   }, [filteredOptions, props.groupBy]);
 
-  const itemCount = Array.isArray(groupedOptions)
-    ? groupedOptions.length
-    : Object.keys(groupedOptions).reduce((acc, group) => {
-        return acc + groupedOptions[group].length;
-      }, 0) + Object.keys(groupedOptions).length;
-
-  const rowVirtualizer = useVirtualizer({
-    count: itemCount,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 35,
-  });
-
   const groupIndexes = useMemo(() => {
     const groupIndexSet = new Set<number>();
     if (Array.isArray(groupedOptions)) {
@@ -195,6 +142,14 @@ const DropDownItemsWrapper = <
 
     return flatOptions as TOption[];
   }, [groupedOptions]);
+
+  const rowVirtualizer = useVirtualizer({
+    count: flatOptions.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 35,
+  });
+
+  console.log('virtualItems', rowVirtualizer.getVirtualItems());
 
   return (
     <DropdownMenuPrimitive.Portal>
@@ -228,36 +183,38 @@ const DropDownItemsWrapper = <
               height: `${rowVirtualizer.getTotalSize()}px`,
             }}
           >
-            {Array.isArray(groupedOptions) ? (
-              <DropDownItems
-                onSubMenuContainerClick={onSubMenuContainerClick}
-                options={groupedOptions}
-                getOptionKey={getOptionKey}
-                onItemClick={handleItemClick}
-                isSelectedFn={isSelectedFn}
-                onGoBackClick={onGoBackClick}
-                renderItem={renderItem}
-              />
-            ) : (
-              Object.entries(groupedOptions).map(([group, options]) => (
-                <React.Fragment key={group}>
-                  {group && (
-                    <DropdownMenuPrimitive.Label asChild={!!renderGroupText}>
-                      {renderGroupText?.(group) ?? group}
-                    </DropdownMenuPrimitive.Label>
-                  )}
-                  <DropDownItems
-                    onSubMenuContainerClick={onSubMenuContainerClick}
-                    options={options}
-                    getOptionKey={getOptionKey}
-                    onItemClick={handleItemClick}
-                    isSelectedFn={isSelectedFn}
-                    onGoBackClick={onGoBackClick}
-                    renderItem={renderItem}
-                  />
-                </React.Fragment>
-              ))
-            )}
+            {flatOptions.map((option, index) => {
+              if (groupIndexes.has(index)) {
+                return (
+                  <DropdownMenuPrimitive.Label
+                    asChild={!!renderGroupText}
+                    key={option.label}
+                  >
+                    {renderGroupText?.(option.label) ?? option.label}
+                  </DropdownMenuPrimitive.Label>
+                );
+              }
+
+              const isOptionSelected = isSelectedFn(option);
+              return (
+                <DropdownMenuPrimitive.Item
+                  key={getOptionKey(option)}
+                  onClick={() => {
+                    if (option.subMenu) {
+                      onSubMenuContainerClick({
+                        menu: option,
+                        subMenu: option.subMenu as any,
+                      });
+                      return;
+                    }
+                    handleItemClick({ ...option, menu });
+                  }}
+                  asChild
+                >
+                  {renderItem({ option, isSelected: isOptionSelected })}
+                </DropdownMenuPrimitive.Item>
+              );
+            })}
           </div>
         </div>
 
