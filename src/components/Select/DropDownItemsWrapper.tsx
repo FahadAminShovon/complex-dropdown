@@ -53,6 +53,8 @@ type DropDownItemProps<
     fRef?: React.Ref<HTMLDivElement>;
   };
 
+const dropdownItemCommonClassName = 'absolute top-0 left-0 w-full flex';
+
 const DropDownItemsWrapper = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -149,8 +151,6 @@ const DropDownItemsWrapper = <
     estimateSize: () => 35,
   });
 
-  console.log('virtualItems', rowVirtualizer.getVirtualItems());
-
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -176,19 +176,31 @@ const DropDownItemsWrapper = <
             </button>
           </DropdownMenuPrimitive.Item>
         )}
+        {/* The scrollable element for your list */}
         <div className="bg-red-300 h-[400px] overflow-auto" ref={parentRef}>
+          {/* The large inner element to hold all of the items */}
           <div
             className="w-full relative"
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
             }}
           >
-            {flatOptions.map((option, index) => {
-              if (groupIndexes.has(index)) {
+            {/* Only the visible items in the virtualizer, manually positioned to be in view */}
+            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+              const option = flatOptions[virtualItem.index];
+              if (groupIndexes.has(virtualItem.index)) {
                 return (
                   <DropdownMenuPrimitive.Label
                     asChild={!!renderGroupText}
-                    key={option.label}
+                    key={virtualItem.key}
+                    data-index={virtualItem.index}
+                    ref={rowVirtualizer.measureElement}
+                    className={dropdownItemCommonClassName}
+                    style={{
+                      transform: `translateY(${
+                        virtualItem.start - rowVirtualizer.options.scrollMargin
+                      }px)`,
+                    }}
                   >
                     {renderGroupText?.(option.label) ?? option.label}
                   </DropdownMenuPrimitive.Label>
@@ -198,7 +210,15 @@ const DropDownItemsWrapper = <
               const isOptionSelected = isSelectedFn(option);
               return (
                 <DropdownMenuPrimitive.Item
-                  key={getOptionKey(option)}
+                  ref={rowVirtualizer.measureElement}
+                  key={virtualItem.key}
+                  data-index={virtualItem.index}
+                  className={dropdownItemCommonClassName}
+                  style={{
+                    transform: `translateY(${
+                      virtualItem.start - rowVirtualizer.options.scrollMargin
+                    }px)`,
+                  }}
                   onClick={() => {
                     if (option.subMenu) {
                       onSubMenuContainerClick({
