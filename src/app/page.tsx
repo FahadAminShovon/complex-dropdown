@@ -51,8 +51,9 @@ type OptionType = {
 //   },
 // ];
 
-const dummyData: OptionType[] = Array.from({ length: 100 }, (_, index) => ({
-  label: `label ${index + 1}`,
+const dummyData: OptionType[] = Array.from({ length: 1000 }, (_, index) => ({
+  // repeat the label randomly
+  label: `label ${index + 1}`.repeat(Math.floor(Math.random() * 10)),
   value: `value ${index + 1}`,
   category: `category ${index % 3}`,
   subMenu: Array.from({ length: 10 }, (_, index) => ({
@@ -125,8 +126,8 @@ export default function Home() {
           options={dummyData}
           multiple={true}
           values={values}
-          search={true}
-          searchBy={({ option, search }) => option.label.includes(search)}
+          // search={true}
+          // searchBy={({ option, search }) => option.label.includes(search)}
           setValues={setValues}
           getOptionKey={(option) => option.value}
           groupBy={(option) => option.category ?? ''}

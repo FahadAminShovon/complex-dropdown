@@ -53,7 +53,7 @@ type DropDownItemProps<
     fRef?: React.Ref<HTMLDivElement>;
   };
 
-const dropdownItemCommonClassName = 'absolute top-0 left-0 w-full flex';
+const dropdownItemCommonClassName = 'absolute top-0 left-0 right-0 w-full';
 
 const DropDownItemsWrapper = <
   TData extends ObjectType,
@@ -159,6 +159,7 @@ const DropDownItemsWrapper = <
           e.preventDefault();
           closeDropDown();
         }}
+        className="rounded-sm overflow-clip shadow-sm"
       >
         {props.search && (
           <DropdownMenuPrimitive.Item asChild>
@@ -166,6 +167,7 @@ const DropDownItemsWrapper = <
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              className="w-full"
             />
           </DropdownMenuPrimitive.Item>
         )}
@@ -177,7 +179,10 @@ const DropDownItemsWrapper = <
           </DropdownMenuPrimitive.Item>
         )}
         {/* The scrollable element for your list */}
-        <div className="bg-red-300 h-[400px] overflow-auto" ref={parentRef}>
+        <div
+          className="bg-red-300 h-[400px] overflow-auto min-w-40"
+          ref={parentRef}
+        >
           {/* The large inner element to hold all of the items */}
           <div
             className="w-full relative"
