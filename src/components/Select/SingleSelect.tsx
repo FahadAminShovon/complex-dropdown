@@ -14,7 +14,7 @@ export type SingleSelectRenderTriggerProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = (_args: {
-  selectedValue: TOption;
+  selectedValue: TOption | null;
 }) => React.ReactNode;
 
 export type SingleSelectProps<
@@ -22,8 +22,8 @@ export type SingleSelectProps<
   TOption extends DropDownDataType<TData>,
 > = CommonSelectProps<TData, TOption> & {
   multiple?: false | never;
-  value: TOption;
-  setValue: Dispatch<SetStateAction<TOption>>;
+  value: TOption | null;
+  setValue: Dispatch<SetStateAction<TOption | null>>;
   renderTrigger?: SingleSelectRenderTriggerProps<TData, TOption>;
 };
 

@@ -13,11 +13,11 @@ export type DropDownItemsWrapperProps<
   TOption extends DropDownDataType<TData>,
 > = {
   options: TOption[];
-  getOptionKey: (option: TOption) => string;
+  getOptionKey: (option: TOption | null) => string;
   groupBy?: GroupByFn<TOption>;
   renderMenu?: (menu: TOption | null) => React.ReactNode;
   renderGroupText?: (group: string) => React.ReactNode;
-  renderItem?: (_obj: {
+  renderItem: (_obj: {
     option: TOption;
     isSelected: boolean;
   }) => React.ReactNode;

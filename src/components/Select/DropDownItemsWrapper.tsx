@@ -35,7 +35,7 @@ const DropDownItemsWrapper = <
     'onItemClick' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onGoBackClick'
   >) => {
   const [search, setSearch] = useState('');
-  const { menu } = useDropDownContext();
+  const { menu, isOpen } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
 
@@ -75,6 +75,17 @@ const DropDownItemsWrapper = <
     );
   }, [filteredOptions, props.groupBy]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // focus the input after the dropdown is open
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  }, [isOpen]);
+
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -88,6 +99,7 @@ const DropDownItemsWrapper = <
         {props.search && (
           <DropdownMenuPrimitive.Item asChild className="w-full">
             <input
+              ref={inputRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

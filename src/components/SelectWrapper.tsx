@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react'; // Import Lucide icons
+import type { DistributedOmit } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
@@ -9,7 +10,9 @@ import type { SingleSelectRenderTriggerProps } from './Select/SingleSelect';
 type SelectWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = SelectProps<TData, TOption>;
+> = DistributedOmit<SelectProps<TData, TOption>, 'renderItem'> & {
+  renderItem?: SelectProps<TData, TOption>['renderItem'];
+};
 
 type SelectLabelFn<
   TData extends ObjectType,
@@ -30,13 +33,13 @@ const SelectWrapper = <
   optionsContainerClassName,
   searchInputClassName,
   placeholder = 'Select...',
-  triggerClassName,
+  containerClassName,
   ...props
 }: SelectWrapperProps<TData, TOption> & {
   selectLabelFn: SelectLabelFn<TData, TOption>;
   renderMenuText?: RenderMenuTextFn<TData, TOption>;
   placeholder?: string;
-  triggerClassName?: string;
+  containerClassName?: string;
 }) => {
   return (
     <Select
@@ -51,7 +54,10 @@ const SelectWrapper = <
 
           return (
             <div
-              className={cn(`${baseClasses} flex-wrap gap-2`, triggerClassName)}
+              className={cn(
+                `${baseClasses} flex-wrap gap-2`,
+                containerClassName,
+              )}
             >
               {selectedValues.length > 0 ? (
                 selectedValues.map((option) => (
@@ -95,7 +101,9 @@ const SelectWrapper = <
         >[0];
 
         return (
-          <div className={cn(baseClasses, triggerClassName)}>
+          <div
+            className={cn(baseClasses, 'justify-between', containerClassName)}
+          >
             <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
               {selectedValue ? selectLabelFn(selectedValue) : placeholder}
             </span>

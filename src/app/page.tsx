@@ -63,18 +63,17 @@ const dummyData: OptionType[] = [
 // }));
 
 export default function Home() {
-  const [value, setValue] = useState({} as OptionType);
+  const [value, setValue] = useState<OptionType | null>(null);
   const [values, setValues] = useState<OptionType[]>([]);
 
   return (
     <div className="container mx-auto my-10 flex flex-col gap-40">
       <SelectWrapper
-        triggerClassName="w-[400px]"
         options={dummyData}
         // multiple={false}
         value={value}
         setValue={setValue}
-        getOptionKey={(option) => option.value}
+        getOptionKey={(option) => option?.value ?? ''}
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
@@ -83,18 +82,17 @@ export default function Home() {
       />
 
       <SelectWrapper
-        // virtualize
-        triggerClassName="w-[400px]"
+        virtualize
         options={dummyData}
         multiple={true}
         values={values}
-        // search={true}
-        // searchBy={({ option, search }) => option.label.includes(search)}
+        search={true}
+        searchBy={({ option, search }) => option.label.includes(search)}
         setValues={setValues}
-        getOptionKey={(option) => option.value}
-        // groupBy={(option) => option.category ?? ''}
+        getOptionKey={(option) => option?.value ?? ''}
+        groupBy={(option) => option.category ?? ''}
         selectLabelFn={(option) => option.label}
-        // renderMenuText={(menu) => menu?.label ?? ''}
+        renderMenuText={(menu) => menu?.label ?? ''}
       />
     </div>
   );
