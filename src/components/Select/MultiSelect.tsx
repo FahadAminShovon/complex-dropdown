@@ -10,6 +10,14 @@ import type {
   ObjectType,
 } from './select.types';
 
+export type MultiSelectRenderTriggerProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = (_args: {
+  selectedValues: TOption[];
+  handleRemove: (option: TOption) => void;
+}) => React.ReactNode;
+
 export type MultiSelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -17,6 +25,7 @@ export type MultiSelectProps<
   multiple: true;
   values: TOption[];
   setValues: Dispatch<SetStateAction<TOption[]>>;
+  renderTrigger?: MultiSelectRenderTriggerProps<TData, TOption>;
 };
 
 const MultiSelect = <
@@ -42,6 +51,12 @@ const MultiSelect = <
     props.setValues([...values, option]);
   };
 
+  const handleRemove = (option: TOption) => {
+    props.setValues(
+      values.filter((value) => getOptionKey(value) !== getOptionKey(option)),
+    );
+  };
+
   const isSelectedFn = (option: TOption) => {
     return values.some((value) => getOptionKey(value) === getOptionKey(option));
   };
@@ -50,7 +65,12 @@ const MultiSelect = <
 
   return (
     <>
-      <SelectTrigger renderTrigger={renderTrigger} />
+      <SelectTrigger
+        renderTrigger={renderTrigger?.({
+          selectedValues: values,
+          handleRemove,
+        })}
+      />
       {isOpen && (
         <DropDownItemsWrapper
           {...props}

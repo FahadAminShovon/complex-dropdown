@@ -10,6 +10,13 @@ import type {
   ObjectType,
 } from './select.types';
 
+export type SingleSelectRenderTriggerProps<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = (_args: {
+  selectedValue: TOption;
+}) => React.ReactNode;
+
 export type SingleSelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -17,6 +24,7 @@ export type SingleSelectProps<
   multiple?: false | never;
   value: TOption;
   setValue: Dispatch<SetStateAction<TOption>>;
+  renderTrigger?: SingleSelectRenderTriggerProps<TData, TOption>;
 };
 
 const SingleSelect = <
@@ -36,7 +44,11 @@ const SingleSelect = <
   const { isOpen } = useDropDownContext();
   return (
     <>
-      <SelectTrigger renderTrigger={renderTrigger} />
+      <SelectTrigger
+        renderTrigger={renderTrigger?.({
+          selectedValue: value,
+        })}
+      />
       {isOpen && (
         <DropDownItemsWrapper
           {...props}

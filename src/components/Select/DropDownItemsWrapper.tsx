@@ -100,7 +100,10 @@ const DropDownItemsWrapper = <
             {renderMenu ? (
               renderMenu(menu as TOption)
             ) : (
-              <button type="button" className="block">
+              <button
+                type="button"
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase tracking-wide block w-full text-left"
+              >
                 &larr; back
               </button>
             )}

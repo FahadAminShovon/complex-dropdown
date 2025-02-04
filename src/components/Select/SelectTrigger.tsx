@@ -1,11 +1,10 @@
 'use client';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import type React from 'react';
 import { cn } from '../../../lib/utils';
 import { useDropDownContext } from './DropDownContextProvider';
 
 export type SelectTriggerProps = {
-  renderTrigger?: React.ReactNode;
+  renderTrigger: React.ReactNode;
 };
 
 const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {

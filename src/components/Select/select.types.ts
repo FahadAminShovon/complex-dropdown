@@ -1,4 +1,4 @@
-import type { SelectTriggerProps } from './SelectTrigger';
+// import type { SelectTriggerProps } from './SelectTrigger';
 
 export type SearchByFn<T extends ObjectType> = (obj: {
   option: T;
@@ -67,7 +67,7 @@ export type MenuSubMenuHandlerProps<
 export type CommonSelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = SelectTriggerProps & DropDownItemsWrapperProps<TData, TOption>;
+> = DropDownItemsWrapperProps<TData, TOption>;
 
 export type VirtualItemsProps<
   TData extends ObjectType,
