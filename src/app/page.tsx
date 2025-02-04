@@ -79,11 +79,11 @@ export default function Home() {
         // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
         selectLabelFn={(option) => option.label}
-        // renderMenuText={(menu) => <div>&larr; {menu?.label}</div>}
+        // renderMenuText={(menu) => menu?.label ?? ''}
       />
 
       <SelectWrapper
-        virtualize
+        // virtualize
         triggerClassName="w-[400px]"
         options={dummyData}
         multiple={true}
@@ -94,7 +94,7 @@ export default function Home() {
         getOptionKey={(option) => option.value}
         // groupBy={(option) => option.category ?? ''}
         selectLabelFn={(option) => option.label}
-        // renderMenuText={(menu) => <div>&larr; {menu?.label}</div>}
+        // renderMenuText={(menu) => menu?.label ?? ''}
       />
     </div>
   );

@@ -1,5 +1,4 @@
-import { ChevronDown, ChevronRight, X } from 'lucide-react'; // Import Lucide icons
-import type React from 'react';
+import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react'; // Import Lucide icons
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
@@ -20,7 +19,7 @@ type SelectLabelFn<
 type RenderMenuTextFn<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = (menu: TOption | null) => React.ReactNode;
+> = (menu: TOption | null) => string;
 
 const SelectWrapper = <
   TData extends ObjectType,
@@ -127,7 +126,8 @@ const SelectWrapper = <
       renderMenu={
         renderMenuText
           ? (menu) => (
-              <div className="bg-white dark:bg-gray-800 p-2 text-gray-600 dark:text-gray-300">
+              <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase tracking-wide w-full text-left flex items-center gap-2 justify-start">
+                <ChevronLeft className="h-4 w-4 flex-shrink-0" />
                 <span>{renderMenuText(menu)}</span>
               </div>
             )
