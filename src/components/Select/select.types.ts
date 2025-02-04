@@ -47,7 +47,7 @@ export type DropDownItemProps<
     fRef?: React.Ref<HTMLDivElement>;
   };
 
-export type ObjectType = Record<string, any>;
+export type ObjectType = Record<string, unknown>;
 export type DropDownDataType<T extends ObjectType> = {
   menu?: T | null;
   subMenu?: T[] | null;

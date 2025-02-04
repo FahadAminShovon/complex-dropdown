@@ -9,7 +9,8 @@ import type {
 } from './select.types';
 
 const dropdownItemCommonClassName = 'absolute top-0 left-0 right-0 w-full';
-export const itemsWrapperClassName = 'h-[400px] overflow-auto min-w-60';
+export const itemsWrapperClassName =
+  'max-h-[440px] min-h-[320px] overflow-auto min-w-60';
 
 const VirtualDropdownItems = <
   TData extends ObjectType,
@@ -75,7 +76,8 @@ const VirtualDropdownItems = <
               <DropdownLabel
                 key={virtualItem.key}
                 fRef={rowVirtualizer.measureElement}
-                label={option.label}
+                // we know that the label is a string because we are using the groupBy function
+                label={option.label as string}
                 dataIndex={virtualItem.index}
                 renderGroupText={renderGroupText}
                 className={dropdownItemCommonClassName}
