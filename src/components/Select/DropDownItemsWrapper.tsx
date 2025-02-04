@@ -130,7 +130,7 @@ const DropDownItemsWrapper = <
             renderGroupText={renderGroupText}
           />
         )}
-        <DropdownMenuPrimitive.Arrow />
+        <DropdownMenuPrimitive.Arrow className="fill-white dark:fill-gray-800 stroke-gray-200 dark:stroke-gray-700" />
       </DropdownMenuPrimitive.Content>
     </DropdownMenuPrimitive.Portal>
   );
