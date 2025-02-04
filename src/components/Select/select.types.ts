@@ -22,6 +22,8 @@ export type DropDownItemsWrapperProps<
     isSelected: boolean;
   }) => React.ReactNode;
   virtualize?: boolean;
+  optionsContainerClassName?: string;
+  searchInputClassName?: string;
 } & (
   | {
       search: true;

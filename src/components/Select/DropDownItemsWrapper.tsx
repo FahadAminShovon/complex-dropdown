@@ -26,6 +26,8 @@ const DropDownItemsWrapper = <
   renderItem,
   renderGroupText,
   virtualize,
+  optionsContainerClassName,
+  searchInputClassName,
   ...props
 }: DropDownItemsWrapperProps<TData, TOption> &
   Pick<
@@ -81,14 +83,15 @@ const DropDownItemsWrapper = <
           e.preventDefault();
           closeDropDown();
         }}
+        className={optionsContainerClassName}
       >
         {props.search && (
-          <DropdownMenuPrimitive.Item asChild>
+          <DropdownMenuPrimitive.Item asChild className="w-full">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full"
+              className={searchInputClassName}
             />
           </DropdownMenuPrimitive.Item>
         )}
@@ -110,6 +113,7 @@ const DropDownItemsWrapper = <
             isSelectedFn={isSelectedFn}
             onSubMenuContainerClick={onSubMenuContainerClick}
             onItemClick={handleItemClick}
+            renderGroupText={renderGroupText}
           />
         )}
         {!virtualize && (
@@ -120,6 +124,7 @@ const DropDownItemsWrapper = <
             isSelectedFn={isSelectedFn}
             renderItem={renderItem}
             getOptionKey={getOptionKey}
+            renderGroupText={renderGroupText}
           />
         )}
         <DropdownMenuPrimitive.Arrow />

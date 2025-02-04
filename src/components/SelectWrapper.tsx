@@ -37,7 +37,11 @@ const SelectWrapper = <
         </div>
       }
       renderItem={({ option, isSelected }) => (
-        <div className={cn({ 'text-black bg-teal-700': isSelected })}>
+        <div
+          className={cn('text-black', {
+            'bg-teal-700': isSelected,
+          })}
+        >
           {selectLabelFn(option)}
         </div>
       )}
@@ -45,12 +49,14 @@ const SelectWrapper = <
       renderMenu={
         renderMenuText
           ? (menu) => (
-              <div>
+              <div className="bg-gray-500">
                 <span>{renderMenuText(menu)}</span>
               </div>
             )
           : undefined
       }
+      optionsContainerClassName="bg-gray-500 w-[200px]"
+      searchInputClassName="bg-white text-black"
       {...props}
     />
   );
