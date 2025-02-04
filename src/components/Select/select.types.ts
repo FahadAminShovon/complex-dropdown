@@ -15,9 +15,9 @@ export type DropDownItemsWrapperProps<
   options: TOption[];
   getOptionKey: (option: TOption) => string;
   groupBy?: GroupByFn<TOption>;
-  renderMenu: (menu: TOption | null) => React.ReactNode;
+  renderMenu?: (menu: TOption | null) => React.ReactNode;
   renderGroupText?: (group: string) => React.ReactNode;
-  renderItem: (_obj: {
+  renderItem?: (_obj: {
     option: TOption;
     isSelected: boolean;
   }) => React.ReactNode;

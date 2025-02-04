@@ -13,7 +13,7 @@ import type {
   ObjectType,
 } from './select.types';
 
-type SelectProps<
+export type SelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = CommonSelectProps<TData, TOption> &

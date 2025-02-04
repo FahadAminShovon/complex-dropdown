@@ -93,10 +93,14 @@ const DropDownItemsWrapper = <
           </DropdownMenuPrimitive.Item>
         )}
         {menu && (
-          <DropdownMenuPrimitive.Item asChild>
-            <button onClick={onGoBackClick} type="button" className="block">
-              {renderMenu(menu as TOption)}
-            </button>
+          <DropdownMenuPrimitive.Item asChild onClick={onGoBackClick}>
+            {renderMenu ? (
+              renderMenu(menu as TOption)
+            ) : (
+              <button type="button" className="block">
+                &larr; back
+              </button>
+            )}
           </DropdownMenuPrimitive.Item>
         )}
         {virtualize && (

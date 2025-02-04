@@ -1,7 +1,6 @@
 'use client';
-import { Select } from '@/components/Select';
+import SelectWrapper from '@/components/SelectWrapper';
 import { useState } from 'react';
-import { cn } from '../../lib/utils';
 
 type OptionType = {
   label: string;
@@ -11,57 +10,57 @@ type OptionType = {
   menu?: OptionType;
 };
 
-// const dummyData: OptionType[] = [
-//   {
-//     label: 'label 1',
-//     value: 'value 1',
-//     category: 'category 1',
-//     subMenu: [
-//       {
-//         label: 'sub label 1',
-//         value: 'sub value 1',
-//         category: 'category 3',
-//       },
-//       {
-//         label: 'sub label 2',
-//         value: 'sub value 2',
-//         category: 'category 3',
-//       },
-//       {
-//         label: 'sub label 2',
-//         value: 'sub value 3',
-//         category: 'category 2',
-//       },
-//     ],
-//   },
-//   {
-//     label: 'label 2',
-//     value: 'value 2',
-//     category: 'category 1',
-//   },
-//   {
-//     label: 'label 3',
-//     value: 'value 3',
-//     category: 'category 2',
-//   },
-//   {
-//     label: 'label 4',
-//     value: 'value 4',
-//     category: 'category 2',
-//   },
-// ];
+const dummyData: OptionType[] = [
+  {
+    label: 'label 1',
+    value: 'value 1',
+    category: 'category 1',
+    subMenu: [
+      {
+        label: 'sub label 1',
+        value: 'sub value 1',
+        category: 'category 3',
+      },
+      {
+        label: 'sub label 2',
+        value: 'sub value 2',
+        category: 'category 3',
+      },
+      {
+        label: 'sub label 2',
+        value: 'sub value 3',
+        category: 'category 2',
+      },
+    ],
+  },
+  {
+    label: 'label 2',
+    value: 'value 2',
+    category: 'category 1',
+  },
+  {
+    label: 'label 3',
+    value: 'value 3',
+    category: 'category 2',
+  },
+  {
+    label: 'label 4',
+    value: 'value 4',
+    category: 'category 2',
+  },
+];
 
-const dummyData: OptionType[] = Array.from({ length: 1000 }, (_, index) => ({
-  // repeat the label randomly
-  label: `label ${index + 1}`.repeat(Math.floor(Math.random() * 10)),
-  value: `value ${index + 1}`,
-  category: `category ${index % 3}`,
-  subMenu: Array.from({ length: 10 }, (_, index) => ({
-    label: `sub label ${index + 1}`,
-    value: `sub value ${index + 1}`,
-    category: `sub category ${index % 3}`,
-  })),
-}));
+// const dummyData: OptionType[] = Array.from({ length: 1000 }, (_, index) => ({
+//   // repeat the label randomly
+//   label: `label ${index + 1}`.repeat(Math.floor(Math.random() * 10)),
+//   value: `value ${index + 1}`,
+//   category: `category ${index % 3}`,
+//   subMenu: Array.from({ length: 10 }, (_, index) => ({
+//     label: `sub label ${index + 1}`,
+//     value: `sub value ${index + 1}`,
+//     category: `sub category ${index % 3}`,
+//   })),
+// }));
 
 export default function Home() {
   const [value, setValue] = useState({} as OptionType);
@@ -79,8 +78,7 @@ export default function Home() {
             <div className="text-black bg-gray-200 p-2">{value.label}</div>
           )}
         </div>
-        <Select
-          virtualize
+        <SelectWrapper
           options={dummyData}
           multiple={false}
           value={value}
@@ -89,19 +87,8 @@ export default function Home() {
           search={true}
           searchBy={({ option, search }) => option.label.includes(search)}
           groupBy={(option) => option.category ?? ''}
-          renderMenu={(menu) => <div>&larr;{menu?.label}</div>}
-          renderItem={({ option, isSelected }) => (
-            <div
-              className={cn({
-                'text-black bg-teal-700': isSelected,
-              })}
-            >
-              {option.label}
-            </div>
-          )}
-          renderGroupText={(group) => (
-            <div className="p-2 bg-gray-800">{group}</div>
-          )}
+          selectLabelFn={(option) => option.label}
+          renderMenuText={(menu) => <div>&larr; {menu?.label}</div>}
         />
       </div>
       <div>
@@ -123,26 +110,18 @@ export default function Home() {
             );
           })}
         </div>
-        <Select
+        <SelectWrapper
           options={dummyData}
           multiple={true}
           values={values}
-          // search={true}
-          // searchBy={({ option, search }) => option.label.includes(search)}
+          search={true}
+          searchBy={({ option, search }) => option.label.includes(search)}
           virtualize
           setValues={setValues}
           getOptionKey={(option) => option.value}
           groupBy={(option) => option.category ?? ''}
-          renderMenu={(menu) => <div>&larr; {menu?.label}</div>}
-          renderItem={({ option, isSelected }) => (
-            <div
-              className={cn({
-                'text-black bg-teal-700': isSelected,
-              })}
-            >
-              {option.label}
-            </div>
-          )}
+          selectLabelFn={(option) => option.label}
+          renderMenuText={(menu) => <div>&larr; {menu?.label}</div>}
         />
       </div>
     </div>
