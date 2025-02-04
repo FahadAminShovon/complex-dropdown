@@ -34,12 +34,14 @@ const SelectWrapper = <
   searchInputClassName,
   placeholder = 'Select...',
   containerClassName,
+  selectWidth,
   ...props
 }: SelectWrapperProps<TData, TOption> & {
   selectLabelFn: SelectLabelFn<TData, TOption>;
   renderMenuText?: RenderMenuTextFn<TData, TOption>;
   placeholder?: string;
   containerClassName?: string;
+  selectWidth?: `[--select-width:${string}]`;
 }) => {
   return (
     <Select
@@ -57,6 +59,8 @@ const SelectWrapper = <
               className={cn(
                 `${baseClasses} flex-wrap gap-2`,
                 containerClassName,
+                selectWidth,
+                '[width:var(--select-width)]',
               )}
             >
               {selectedValues.length > 0 ? (
@@ -102,7 +106,13 @@ const SelectWrapper = <
 
         return (
           <div
-            className={cn(baseClasses, 'justify-between', containerClassName)}
+            className={cn(
+              baseClasses,
+              'justify-between',
+              containerClassName,
+              selectWidth,
+              '[width:var(--select-width)]',
+            )}
           >
             <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
               {selectedValue ? selectLabelFn(selectedValue) : placeholder}
@@ -142,8 +152,10 @@ const SelectWrapper = <
           : undefined
       }
       optionsContainerClassName={cn(
-        'bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 w-fit  overflow-y-auto',
+        'bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 overflow-y-auto w-full',
+        selectWidth,
         optionsContainerClassName,
+        '[width:var(--select-width)]',
       )}
       searchInputClassName={cn(
         'w-full px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-transparent',

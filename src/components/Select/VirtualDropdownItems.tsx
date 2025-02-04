@@ -9,7 +9,7 @@ import type {
 } from './select.types';
 
 const dropdownItemCommonClassName = 'absolute top-0 left-0 right-0 w-full';
-export const itemsWrapperClassName = 'h-[400px] overflow-auto min-w-[200px]';
+export const itemsWrapperClassName = 'h-[400px] overflow-auto min-w-60';
 
 const VirtualDropdownItems = <
   TData extends ObjectType,

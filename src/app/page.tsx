@@ -70,29 +70,31 @@ export default function Home() {
     <div className="container mx-auto my-10 flex flex-col gap-40">
       <SelectWrapper
         options={dummyData}
-        // multiple={false}
         value={value}
         setValue={setValue}
         getOptionKey={(option) => option?.value ?? ''}
+        selectLabelFn={(option) => option.label}
+        // virtualize
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
-        selectLabelFn={(option) => option.label}
         // renderMenuText={(menu) => menu?.label ?? ''}
+        // selectWidth={'[--select-width:800px]'}
       />
 
       <SelectWrapper
-        virtualize
         options={dummyData}
         multiple={true}
         values={values}
-        search={true}
-        searchBy={({ option, search }) => option.label.includes(search)}
         setValues={setValues}
         getOptionKey={(option) => option?.value ?? ''}
-        groupBy={(option) => option.category ?? ''}
         selectLabelFn={(option) => option.label}
-        renderMenuText={(menu) => menu?.label ?? ''}
+        // virtualize
+        // search={true}
+        // searchBy={({ option, search }) => option.label.includes(search)}
+        // groupBy={(option) => option.category ?? ''}
+        // renderMenuText={(menu) => menu?.label ?? ''}
+        // selectWidth={'[--select-width:800px]'}
       />
     </div>
   );
