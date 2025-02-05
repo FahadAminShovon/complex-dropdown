@@ -29,12 +29,11 @@ const DropDownItems = <
   return (
     <>
       {options.map((option) => {
-        const isOptionSelected = isSelectedFn(option);
         return (
           <DropDownItem
+            isSelectedFn={isSelectedFn}
             key={getOptionKey(option)}
             option={option}
-            isOptionSelected={isOptionSelected}
             {...props}
           />
         );

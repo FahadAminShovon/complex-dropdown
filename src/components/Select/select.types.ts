@@ -20,6 +20,9 @@ export type DropDownItemsWrapperProps<
   renderItem: (_obj: {
     option: TOption;
     isSelected: boolean;
+    isMenu: boolean;
+    isAllSubmenuSelected: boolean;
+    isPartiallySubmenuSelected: boolean;
   }) => React.ReactNode;
   virtualize?: boolean;
   optionsContainerClassName?: string;

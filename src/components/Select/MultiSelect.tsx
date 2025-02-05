@@ -57,8 +57,10 @@ const MultiSelect = <
     );
   };
 
+  const selectedValuesSet = new Set(values.map(getOptionKey));
+
   const isSelectedFn = (option: TOption) => {
-    return values.some((value) => getOptionKey(value) === getOptionKey(option));
+    return selectedValuesSet.has(getOptionKey(option));
   };
 
   const { isOpen } = useDropDownContext();

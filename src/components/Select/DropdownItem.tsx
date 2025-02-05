@@ -10,17 +10,15 @@ export const DropDownItem = <
   onSubMenuContainerClick,
   onItemClick: handleItemClick,
   renderItem,
-  isOptionSelected,
   option,
   fRef,
   dataIndex,
+  isSelectedFn,
   ...props
 }: Pick<
   DropDownItemProps<TData, TOption>,
-  'onSubMenuContainerClick' | 'onItemClick' | 'renderItem'
+  'onSubMenuContainerClick' | 'onItemClick' | 'renderItem' | 'isSelectedFn'
 > & {
-  isOptionSelected: boolean;
-} & {
   option: DropDownItemProps<TData, TOption>['options'][number];
   fRef?: React.Ref<HTMLDivElement>;
   className?: string;
@@ -28,6 +26,16 @@ export const DropDownItem = <
   style?: React.CSSProperties;
 }) => {
   const { menu } = useDropDownContext();
+  const isMenu = option.subMenu != null && option.subMenu.length > 0;
+  const isOptionSelected = isSelectedFn(option);
+
+  const isAllSubmenuSelected = isMenu
+    ? (option.subMenu?.every((subMenu) => isSelectedFn(subMenu as any)) ??
+      false)
+    : isOptionSelected;
+  const isPartiallySubmenuSelected = isMenu
+    ? (option.subMenu?.some((subMenu) => isSelectedFn(subMenu as any)) ?? false)
+    : false;
   return (
     <Command.Item
       ref={fRef}
@@ -45,7 +53,13 @@ export const DropDownItem = <
       asChild
       {...props}
     >
-      {renderItem({ option, isSelected: isOptionSelected })}
+      {renderItem({
+        option,
+        isSelected: isOptionSelected,
+        isMenu,
+        isAllSubmenuSelected,
+        isPartiallySubmenuSelected,
+      })}
     </Command.Item>
   );
 };

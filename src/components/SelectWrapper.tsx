@@ -1,4 +1,12 @@
-import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react'; // Import Lucide icons
+import {
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  X,
+} from 'lucide-react';
+import type React from 'react';
 import type { DistributedOmit } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
@@ -7,22 +15,27 @@ import type { MultiSelectRenderTriggerProps } from './Select/MultiSelect';
 import type { SelectProps } from './Select/Select';
 import type { SingleSelectRenderTriggerProps } from './Select/SingleSelect';
 
+type SelectLabelFn<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = (option: TOption) => React.ReactNode;
+
+type RenderMenuTextFn<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = (menu: TOption | null) => React.ReactNode;
+
 type SelectWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = DistributedOmit<SelectProps<TData, TOption>, 'renderItem'> & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
+  selectLabelFn: SelectLabelFn<TData, TOption>;
+  renderMenuText?: RenderMenuTextFn<TData, TOption>;
+  placeholder?: string;
+  containerClassName?: string;
+  selectWidth?: `[--select-width:${string}]`;
 };
-
-type SelectLabelFn<
-  TData extends ObjectType,
-  TOption extends DropDownDataType<TData>,
-> = (option: TOption) => string;
-
-type RenderMenuTextFn<
-  TData extends ObjectType,
-  TOption extends DropDownDataType<TData>,
-> = (menu: TOption | null) => string;
 
 const SelectWrapper = <
   TData extends ObjectType,
@@ -36,13 +49,7 @@ const SelectWrapper = <
   containerClassName,
   selectWidth,
   ...props
-}: SelectWrapperProps<TData, TOption> & {
-  selectLabelFn: SelectLabelFn<TData, TOption>;
-  renderMenuText?: RenderMenuTextFn<TData, TOption>;
-  placeholder?: string;
-  containerClassName?: string;
-  selectWidth?: `[--select-width:${string}]`;
-}) => {
+}: SelectWrapperProps<TData, TOption>) => {
   return (
     <Select
       renderTrigger={(args: unknown) => {
@@ -72,10 +79,9 @@ const SelectWrapper = <
                       e.stopPropagation();
                     }}
                     onKeyDown={(e) => {
-                      e.stopPropagation();
-                    }}
-                    onKeyUp={(e) => {
-                      e.stopPropagation();
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.stopPropagation();
+                      }
                     }}
                   >
                     {selectLabelFn(option)}
@@ -121,19 +127,47 @@ const SelectWrapper = <
           </div>
         );
       }}
-      renderItem={({ option, isSelected }) => (
+      renderItem={({
+        option,
+        isSelected,
+        isMenu,
+        isAllSubmenuSelected,
+        isPartiallySubmenuSelected,
+      }) => (
         <div
           className={cn(
-            'px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between',
+            'group px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between',
             {
-              'bg-teal-600 text-white': isSelected,
+              'text-teal-600 dark:text-teal-400':
+                isSelected || isAllSubmenuSelected,
+              'font-medium':
+                isSelected ||
+                isAllSubmenuSelected ||
+                isPartiallySubmenuSelected,
             },
           )}
         >
-          <span>{selectLabelFn(option)}</span>
-          {option.subMenu && option.subMenu.length > 0 && (
-            <ChevronRight className="h-4 w-4 ml-2 flex-shrink-0" />
-          )}
+          <span className="truncate">{selectLabelFn(option)}</span>
+          <div className="flex items-center ml-2 space-x-2">
+            {(isSelected ||
+              isAllSubmenuSelected ||
+              isPartiallySubmenuSelected) && (
+              <span className="flex items-center justify-center w-5 h-5">
+                {isMenu ? (
+                  isAllSubmenuSelected ? (
+                    <Check className="h-4 w-4" />
+                  ) : isPartiallySubmenuSelected ? (
+                    <Circle className="h-2 w-2 fill-current text-teal-600 dark:text-teal-400" />
+                  ) : null
+                ) : (
+                  <Check className="h-4 w-4" />
+                )}
+              </span>
+            )}
+            {isMenu && (
+              <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-300 flex-shrink-0 transition-all duration-200 ease-in-out transform group-hover:translate-x-1 group-hover:text-gray-900 group-hover:scale-110 dark:group-hover:text-gray-100" />
+            )}
+          </div>
         </div>
       )}
       renderGroupText={(group) => (

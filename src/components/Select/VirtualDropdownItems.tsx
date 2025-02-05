@@ -89,14 +89,13 @@ const VirtualDropdownItems = <
               />
             );
           }
-          const isOptionSelected = isSelectedFn(option);
           return (
             <DropDownItem
+              isSelectedFn={isSelectedFn}
               fRef={rowVirtualizer.measureElement}
               key={virtualItem.key}
               dataIndex={virtualItem.index}
               className={dropdownItemCommonClassName}
-              isOptionSelected={isOptionSelected}
               option={option}
               renderItem={renderItem}
               style={{
