@@ -80,6 +80,7 @@ export default function Home() {
         // groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
         // selectWidth={'[--select-width:800px]'}
+        // align="start"
       />
 
       <SelectWrapper

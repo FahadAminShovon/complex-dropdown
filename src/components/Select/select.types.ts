@@ -1,4 +1,4 @@
-// import type { SelectTriggerProps } from './SelectTrigger';
+import type { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu';
 
 export type SearchByFn<T extends ObjectType> = (obj: {
   option: T;
@@ -24,15 +24,16 @@ export type DropDownItemsWrapperProps<
   virtualize?: boolean;
   optionsContainerClassName?: string;
   searchInputClassName?: string;
-} & (
-  | {
-      search: true;
-      searchBy: SearchByFn<TOption>;
-    }
-  | {
-      search?: false | never;
-    }
-);
+} & Pick<DropdownMenuContentProps, 'align'> &
+  (
+    | {
+        search: true;
+        searchBy: SearchByFn<TOption>;
+      }
+    | {
+        search?: false | never;
+      }
+  );
 
 export type DropDownItemProps<
   TData extends ObjectType,

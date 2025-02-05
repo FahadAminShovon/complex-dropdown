@@ -1,6 +1,5 @@
 'use client';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import type { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
@@ -29,14 +28,13 @@ const DropDownItemsWrapper = <
   virtualize,
   optionsContainerClassName,
   searchInputClassName,
-  align = 'start',
+  align = 'center',
   ...props
 }: DropDownItemsWrapperProps<TData, TOption> &
   Pick<
     DropDownItemProps<TData, TOption>,
     'onItemClick' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onGoBackClick'
-  > &
-  Pick<DropdownMenuContentProps, 'align'>) => {
+  >) => {
   const [search, setSearch] = useState('');
   const { menu, isOpen } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
@@ -92,7 +90,7 @@ const DropDownItemsWrapper = <
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
-        sideOffset={5}
+        sideOffset={align === 'center' ? 5 : 2}
         onPointerDownOutside={(e) => {
           e.preventDefault();
           closeDropDown();
@@ -146,7 +144,9 @@ const DropDownItemsWrapper = <
             renderGroupText={renderGroupText}
           />
         )}
-        <DropdownMenuPrimitive.Arrow className="fill-white dark:fill-gray-800 stroke-gray-200 dark:stroke-gray-700" />
+        {align === 'center' && (
+          <DropdownMenuPrimitive.Arrow className="fill-white dark:fill-gray-800 stroke-gray-200 dark:stroke-gray-700" />
+        )}
       </DropdownMenuPrimitive.Content>
     </DropdownMenuPrimitive.Portal>
   );
