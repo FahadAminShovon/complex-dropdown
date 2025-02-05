@@ -1,4 +1,4 @@
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { Command } from 'cmdk';
 import type { DropDownItemsWrapperProps } from './select.types';
 
 type DropdownLabelProps = {
@@ -19,7 +19,7 @@ export const DropdownLabel = ({
   renderGroupText,
 }: DropdownLabelProps) => {
   return (
-    <DropdownMenuPrimitive.Label
+    <Command.Item
       asChild={!!renderGroupText}
       data-index={dataIndex}
       ref={fRef}
@@ -27,7 +27,7 @@ export const DropdownLabel = ({
       style={style}
     >
       {renderGroupText?.(label) ?? label}
-    </DropdownMenuPrimitive.Label>
+    </Command.Item>
   );
 };
 

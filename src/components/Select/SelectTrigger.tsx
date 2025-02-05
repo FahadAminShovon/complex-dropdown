@@ -1,5 +1,5 @@
 'use client';
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { cn } from '../../../lib/utils';
 import { useDropDownContext } from './DropDownContextProvider';
 
@@ -10,7 +10,7 @@ export type SelectTriggerProps = {
 const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {
   const { toggleDropDown } = useDropDownContext();
   return (
-    <DropdownMenuPrimitive.Trigger
+    <PopoverPrimitive.Trigger
       className={cn({
         'cursor-pointer border border-gray-300 rounded-md px-3 py-2':
           !renderTrigger,
@@ -19,7 +19,7 @@ const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {
       asChild={!!renderTrigger}
     >
       {renderTrigger ?? <span>SelectTrigger</span>}
-    </DropdownMenuPrimitive.Trigger>
+    </PopoverPrimitive.Trigger>
   );
 };
 

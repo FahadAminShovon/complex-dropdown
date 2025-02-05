@@ -1,5 +1,6 @@
 'use client';
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
+
 import { useEffect, useState } from 'react';
 import { DropDownContextProvider } from './DropDownContextProvider';
 import type { MultiSelectProps } from './MultiSelect';
@@ -74,7 +75,7 @@ const Select = <
       openDropDown={openDropDown}
       closeDropDown={closeDropDown}
     >
-      <DropdownMenuPrimitive.Root open={isOpen}>
+      <PopoverPrimitive.Root open={isOpen}>
         {props.multiple && (
           <MultiSelect
             {...props}
@@ -91,7 +92,7 @@ const Select = <
             onGoBackClick={onGoBackClick}
           />
         )}
-      </DropdownMenuPrimitive.Root>
+      </PopoverPrimitive.Root>
     </DropDownContextProvider>
   );
 };

@@ -1,4 +1,4 @@
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import { Command } from 'cmdk';
 import { useDropDownContext } from './DropDownContextProvider';
 import type { DropDownItemProps } from './select.types';
 import type { DropDownDataType, ObjectType } from './select.types';
@@ -29,10 +29,10 @@ export const DropDownItem = <
 }) => {
   const { menu } = useDropDownContext();
   return (
-    <DropdownMenuPrimitive.Item
+    <Command.Item
       ref={fRef}
       data-index={dataIndex}
-      onClick={() => {
+      onSelect={() => {
         if (option.subMenu) {
           onSubMenuContainerClick({
             menu: option,
@@ -46,6 +46,6 @@ export const DropDownItem = <
       {...props}
     >
       {renderItem({ option, isSelected: isOptionSelected })}
-    </DropdownMenuPrimitive.Item>
+    </Command.Item>
   );
 };

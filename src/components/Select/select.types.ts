@@ -1,4 +1,4 @@
-import type { DropdownMenuContentProps } from '@radix-ui/react-dropdown-menu';
+import type { PopoverContentProps } from '@radix-ui/react-popover';
 
 export type SearchByFn<T extends ObjectType> = (obj: {
   option: T;
@@ -24,7 +24,7 @@ export type DropDownItemsWrapperProps<
   virtualize?: boolean;
   optionsContainerClassName?: string;
   searchInputClassName?: string;
-} & Pick<DropdownMenuContentProps, 'align'> &
+} & Pick<PopoverContentProps, 'align'> &
   (
     | {
         search: true;

@@ -1,5 +1,6 @@
 'use client';
-import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { Command } from 'cmdk';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
@@ -88,8 +89,8 @@ const DropDownItemsWrapper = <
   }, [isOpen]);
 
   return (
-    <DropdownMenuPrimitive.Portal>
-      <DropdownMenuPrimitive.Content
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Content
         sideOffset={align === 'center' ? 5 : 2}
         onPointerDownOutside={(e) => {
           e.preventDefault();
@@ -97,58 +98,60 @@ const DropDownItemsWrapper = <
         }}
         className={optionsContainerClassName}
         align={align}
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        {props.search && (
-          <DropdownMenuPrimitive.Item asChild className="w-full">
-            <input
-              ref={inputRef}
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className={searchInputClassName}
-            />
-          </DropdownMenuPrimitive.Item>
-        )}
-        {menu && (
-          <DropdownMenuPrimitive.Item asChild onClick={onGoBackClick}>
-            {renderMenu ? (
-              renderMenu(menu as TOption)
-            ) : (
-              <button
-                type="button"
-                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase tracking-wide block w-full text-left"
-              >
-                &larr; back
-              </button>
+        <Command>
+          <Command.List>
+            {props.search && (
+              <Command.Input
+                value={search}
+                onValueChange={setSearch}
+                className={searchInputClassName}
+                autoFocus
+              />
             )}
-          </DropdownMenuPrimitive.Item>
-        )}
-        {virtualize && (
-          <VirtualDropdownItems
-            groupedOptions={groupedOptions}
-            renderItem={renderItem}
-            isSelectedFn={isSelectedFn}
-            onSubMenuContainerClick={onSubMenuContainerClick}
-            onItemClick={handleItemClick}
-            renderGroupText={renderGroupText}
-          />
-        )}
-        {!virtualize && (
-          <NonVirtualDropdownItems
-            groupedOptions={groupedOptions}
-            onSubMenuContainerClick={onSubMenuContainerClick}
-            onItemClick={handleItemClick}
-            isSelectedFn={isSelectedFn}
-            renderItem={renderItem}
-            getOptionKey={getOptionKey}
-            renderGroupText={renderGroupText}
-          />
-        )}
-        {align === 'center' && (
-          <DropdownMenuPrimitive.Arrow className="fill-white dark:fill-gray-800 stroke-gray-200 dark:stroke-gray-700" />
-        )}
-      </DropdownMenuPrimitive.Content>
-    </DropdownMenuPrimitive.Portal>
+            {menu && (
+              <Command.Item asChild onSelect={onGoBackClick}>
+                {renderMenu ? (
+                  renderMenu(menu as TOption)
+                ) : (
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase tracking-wide block w-full text-left"
+                  >
+                    &larr; back
+                  </button>
+                )}
+              </Command.Item>
+            )}
+            {virtualize && (
+              <VirtualDropdownItems
+                groupedOptions={groupedOptions}
+                renderItem={renderItem}
+                isSelectedFn={isSelectedFn}
+                onSubMenuContainerClick={onSubMenuContainerClick}
+                onItemClick={handleItemClick}
+                renderGroupText={renderGroupText}
+              />
+            )}
+            {!virtualize && (
+              <NonVirtualDropdownItems
+                groupedOptions={groupedOptions}
+                onSubMenuContainerClick={onSubMenuContainerClick}
+                onItemClick={handleItemClick}
+                isSelectedFn={isSelectedFn}
+                renderItem={renderItem}
+                getOptionKey={getOptionKey}
+                renderGroupText={renderGroupText}
+              />
+            )}
+            {align === 'center' && (
+              <PopoverPrimitive.Arrow className="fill-white dark:fill-gray-800 stroke-gray-200 dark:stroke-gray-700" />
+            )}
+          </Command.List>
+        </Command>
+      </PopoverPrimitive.Content>
+    </PopoverPrimitive.Portal>
   );
 };
 
