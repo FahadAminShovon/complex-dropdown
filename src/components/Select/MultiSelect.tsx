@@ -127,22 +127,12 @@ const MultiSelect = <
 
   return (
     <>
-      <div>
-        <button type="button" onClick={handleClearAll}>
-          clear all
-        </button>
-        <br />
-        <button type="button" onClick={handleSelectAll}>
-          select all
-        </button>
-        <SelectTrigger
-          renderTrigger={renderTrigger?.({
-            selectedValues: values,
-            handleRemove,
-          })}
-        />
-      </div>
-
+      <SelectTrigger
+        renderTrigger={renderTrigger?.({
+          selectedValues: values,
+          handleRemove,
+        })}
+      />
       {isOpen && (
         <DropDownItemsWrapper
           {...props}
