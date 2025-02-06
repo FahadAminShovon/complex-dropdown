@@ -40,6 +40,7 @@ const MultiSelect = <
   MenuSubMenuHandlerProps<TData, TOption> & {
     allOptions: TOption[];
   }) => {
+  const { menu } = useDropDownContext();
   const handleItemClick = (option: TOption) => {
     const isSelected = values.some(
       (value) => getOptionKey(value) === getOptionKey(option),
@@ -94,6 +95,22 @@ const MultiSelect = <
     props.setValues(updatedValues);
   };
 
+  // TODO: add ui for clear all
+  const handleClearAll = () => {
+    // if it's on parent menu, clear all
+    console.log('menu', menu);
+    if (!menu) {
+      props.setValues([]);
+      return;
+    }
+    // if it's on submenu, clear all options on that submenu
+    const optionKeysSet = new Set(props.options.map(getOptionKey));
+    const updatedValues = values.filter((value) => {
+      return !optionKeysSet.has(getOptionKey(value));
+    });
+    props.setValues(updatedValues);
+  };
+
   const handleRemove = (option: TOption) => {
     props.setValues(
       values.filter((value) => getOptionKey(value) !== getOptionKey(option)),
@@ -110,12 +127,22 @@ const MultiSelect = <
 
   return (
     <>
-      <SelectTrigger
-        renderTrigger={renderTrigger?.({
-          selectedValues: values,
-          handleRemove,
-        })}
-      />
+      <div>
+        <button type="button" onClick={handleClearAll}>
+          clear all
+        </button>
+        <br />
+        <button type="button" onClick={handleSelectAll}>
+          select all
+        </button>
+        <SelectTrigger
+          renderTrigger={renderTrigger?.({
+            selectedValues: values,
+            handleRemove,
+          })}
+        />
+      </div>
+
       {isOpen && (
         <DropDownItemsWrapper
           {...props}
