@@ -37,7 +37,9 @@ const MultiSelect = <
   getOptionKey,
   ...props
 }: MultiSelectProps<TData, TOption> &
-  MenuSubMenuHandlerProps<TData, TOption>) => {
+  MenuSubMenuHandlerProps<TData, TOption> & {
+    allOptions: TOption[];
+  }) => {
   const handleItemClick = (option: TOption) => {
     const isSelected = values.some(
       (value) => getOptionKey(value) === getOptionKey(option),
@@ -49,6 +51,47 @@ const MultiSelect = <
       return;
     }
     props.setValues([...values, option]);
+  };
+
+  // TODO: add ui for select all
+  const handleSelectAll = () => {
+    const allOptions = props.options.flatMap((option) => {
+      if (option.subMenu) {
+        return option.subMenu.map((subOption) =>
+          getOptionKey(subOption as any),
+        );
+      }
+      return getOptionKey(option as any);
+    });
+
+    const allOptionsSet = new Set(allOptions);
+
+    // add all selected values to the set
+    for (const value of values) {
+      allOptionsSet.add(getOptionKey(value as any));
+    }
+
+    // filter the options to only include the ones that are in the set
+    const updatedValues = props.allOptions
+      .flatMap((option) => {
+        if (option.subMenu) {
+          return option.subMenu
+            .filter((subOption) =>
+              allOptionsSet.has(getOptionKey(subOption as any)),
+            )
+            .map((subOption) => ({
+              ...subOption,
+              menu: option,
+            }));
+        }
+        if (allOptionsSet.has(getOptionKey(option as any))) {
+          return option;
+        }
+        return null;
+      })
+      .filter(Boolean) as TOption[];
+
+    props.setValues(updatedValues);
   };
 
   const handleRemove = (option: TOption) => {

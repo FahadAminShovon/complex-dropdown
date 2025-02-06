@@ -79,7 +79,10 @@ const Select = <
         {props.multiple && (
           <MultiSelect
             {...props}
+            // current options
             options={selectedOptions.subMenu}
+            // all options
+            allOptions={options}
             onSubMenuContainerClick={onSubMenuContainerClick}
             onGoBackClick={onGoBackClick}
           />
