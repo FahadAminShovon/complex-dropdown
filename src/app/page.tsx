@@ -79,8 +79,9 @@ export default function Home() {
         // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
-        // selectWidth={'[--select-width:800px]'}
         // align="start"
+        // clearable
+        // selectWidth={'[--select-width:800px]'}
       />
 
       <SelectWrapper
@@ -97,6 +98,7 @@ export default function Home() {
         // renderMenuText={(menu) => menu?.label ?? ''}
         // allowSelectAll
         // align="start"
+        clearable
         // selectWidth={'[--select-width:800px]'}
       />
     </div>

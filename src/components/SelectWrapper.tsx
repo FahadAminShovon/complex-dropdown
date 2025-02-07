@@ -35,6 +35,7 @@ type SelectWrapperProps<
   placeholder?: string;
   containerClassName?: string;
   selectWidth?: `[--select-width:${string}]`;
+  clearable?: boolean;
 };
 
 const SelectWrapper = <
@@ -48,8 +49,18 @@ const SelectWrapper = <
   placeholder = 'Select...',
   containerClassName,
   selectWidth,
+  clearable,
   ...props
 }: SelectWrapperProps<TData, TOption>) => {
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (props.multiple) {
+      props.setValues([]);
+    } else {
+      props.setValue(null);
+    }
+  };
+
   return (
     <Select
       renderTrigger={(args: unknown) => {
@@ -64,45 +75,59 @@ const SelectWrapper = <
           return (
             <div
               className={cn(
-                `${baseClasses} flex-wrap gap-2`,
+                `${baseClasses} gap-2`,
                 containerClassName,
                 selectWidth,
                 '[width:var(--select-width)]',
               )}
             >
-              {selectedValues.length > 0 ? (
-                selectedValues.map((option) => (
-                  <div
-                    key={props.getOptionKey(option)}
-                    className="bg-teal-100 dark:bg-teal-700 text-teal-800 dark:text-teal-100 rounded-full px-3 py-1 text-sm flex items-center group transition-all duration-200 hover:bg-teal-200 dark:hover:bg-teal-600 hover:shadow-md"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.stopPropagation();
-                      }
-                    }}
-                  >
-                    {selectLabelFn(option)}
-                    <button
-                      type="button"
+              <div className="flex flex-wrap gap-2">
+                {selectedValues.length > 0 ? (
+                  selectedValues.map((option) => (
+                    <div
+                      key={props.getOptionKey(option)}
+                      className="bg-teal-100 dark:bg-teal-700 text-teal-800 dark:text-teal-100 rounded-full px-3 py-1 text-sm flex items-center group transition-all duration-200 hover:bg-teal-200 dark:hover:bg-teal-600 hover:shadow-md"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemove(option);
                       }}
-                      className="ml-2 focus:outline-none opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.stopPropagation();
+                        }
+                      }}
                     >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <span className="text-gray-500 dark:text-gray-400">
-                  {placeholder}
-                </span>
-              )}
-              <ChevronDown className="ml-auto h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                      {selectLabelFn(option)}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemove(option);
+                        }}
+                        className="ml-2 focus:outline-none opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {placeholder}
+                  </span>
+                )}
+              </div>
+
+              <div className="ml-auto flex items-center">
+                {clearable && selectedValues.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="mr-2 focus:outline-none text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+                <ChevronDown className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+              </div>
             </div>
           );
         }
@@ -123,7 +148,18 @@ const SelectWrapper = <
             <span className="text-gray-700 dark:text-gray-200 font-medium truncate">
               {selectedValue ? selectLabelFn(selectedValue) : placeholder}
             </span>
-            <ChevronDown className="ml-2 h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+            <div className="ml-auto flex items-center">
+              {clearable && selectedValue && (
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="mr-2 focus:outline-none text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              <ChevronDown className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+            </div>
           </div>
         );
       }}
