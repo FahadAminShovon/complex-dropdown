@@ -90,12 +90,13 @@ export default function Home() {
         setValues={setValues}
         getOptionKey={(option) => option?.value ?? ''}
         selectLabelFn={(option) => option?.label}
-        // allowSelectAll
-        // virtualize
-        // search={true}
-        // searchBy={({ option, search }) => option.label.includes(search)}
+        virtualize
+        search={true}
+        searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
+        // allowSelectAll
+        // align="start"
         // selectWidth={'[--select-width:800px]'}
       />
     </div>

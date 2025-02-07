@@ -8,6 +8,7 @@ import type {
   DropDownDataType,
   MenuSubMenuHandlerProps,
   ObjectType,
+  SelectPropsNotAllowed,
 } from './select.types';
 
 export type SingleSelectRenderTriggerProps<
@@ -25,7 +26,7 @@ export type SingleSelectProps<
   value: TOption | null;
   setValue: Dispatch<SetStateAction<TOption | null>>;
   renderTrigger?: SingleSelectRenderTriggerProps<TData, TOption>;
-};
+} & SelectPropsNotAllowed;
 
 const SingleSelect = <
   TData extends ObjectType,
@@ -58,6 +59,7 @@ const SingleSelect = <
           }}
           getOptionKey={getOptionKey}
           isSelectedFn={isSelectedFn}
+          allowSelectAll={false}
         />
       )}
     </>

@@ -10,11 +10,11 @@ import { useDropDownContext } from './DropDownContextProvider';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
 import type {
-  AllowSelectAllProps,
   CommonSelectProps,
   DropDownDataType,
   MenuSubMenuHandlerProps,
   ObjectType,
+  SelectPropsAllowed,
 } from './select.types';
 
 export type MultiSelectRenderTriggerProps<
@@ -33,7 +33,7 @@ export type MultiSelectProps<
   values: TOption[];
   setValues: Dispatch<SetStateAction<TOption[]>>;
   renderTrigger?: MultiSelectRenderTriggerProps<TData, TOption>;
-} & Pick<AllowSelectAllProps, 'allowSelectAll'>;
+} & SelectPropsAllowed;
 
 const MultiSelect = <
   TData extends ObjectType,

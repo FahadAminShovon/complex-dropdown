@@ -126,14 +126,19 @@ export type NonVirtualItemsProps<
 > &
   Pick<DropDownItemsWrapperProps<TData, TOption>, 'getOptionKey'>;
 
+export type SelectPropsAllowed = {
+  allowSelectAll?: boolean;
+};
+
+export type SelectPropsNotAllowed = {
+  allowSelectAll?: false | never;
+};
+
 export type AllowSelectAllProps =
-  | {
-      allowSelectAll: true;
+  | ({
       onSelectAll: () => void;
       onClearAll: () => void;
       isAllSelected: boolean;
       isNoItemSelected: boolean;
-    }
-  | {
-      allowSelectAll?: false | never;
-    };
+    } & SelectPropsAllowed)
+  | SelectPropsNotAllowed;
