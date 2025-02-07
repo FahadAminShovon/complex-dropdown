@@ -73,7 +73,7 @@ export default function Home() {
         value={value}
         setValue={setValue}
         getOptionKey={(option) => option?.value ?? ''}
-        selectLabelFn={(option) => option.label}
+        selectLabelFn={(option) => option?.label}
         // virtualize
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}
@@ -89,7 +89,8 @@ export default function Home() {
         values={values}
         setValues={setValues}
         getOptionKey={(option) => option?.value ?? ''}
-        selectLabelFn={(option) => option.label}
+        selectLabelFn={(option) => option?.label}
+        // allowSelectAll
         // virtualize
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}

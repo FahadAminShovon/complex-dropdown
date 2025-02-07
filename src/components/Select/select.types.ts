@@ -8,6 +8,29 @@ export type SearchByFn<T extends ObjectType> = (obj: {
 
 type GroupByFn<T extends ObjectType> = (option: T) => string;
 
+type RenderItemType<
+  TData extends ObjectType,
+  TOption extends DropDownDataType<TData>,
+> = (
+  _obj:
+    | {
+        type: 'option';
+        option: TOption;
+        isSelected: boolean;
+        isMenu: boolean;
+        isAllSubmenuSelected: boolean;
+        isPartiallySubmenuSelected: boolean;
+      }
+    | {
+        type: 'selectAll';
+        isSelected: boolean;
+      }
+    | {
+        type: 'clearAll';
+        isNoItemSelected: boolean;
+      },
+) => React.ReactNode;
+
 export type DropDownItemsWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -17,16 +40,12 @@ export type DropDownItemsWrapperProps<
   groupBy?: GroupByFn<TOption>;
   renderMenu?: (menu: TOption | null) => React.ReactNode;
   renderGroupText?: (group: string) => React.ReactNode;
-  renderItem: (_obj: {
-    option: TOption;
-    isSelected: boolean;
-    isMenu: boolean;
-    isAllSubmenuSelected: boolean;
-    isPartiallySubmenuSelected: boolean;
-  }) => React.ReactNode;
+  renderItem: RenderItemType<TData, TOption>;
   virtualize?: boolean;
   optionsContainerClassName?: string;
   searchInputClassName?: string;
+  onSelectAll?: () => void;
+  onClearAll?: () => void;
 } & Pick<PopoverContentProps, 'align'> &
   (
     | {
@@ -49,7 +68,16 @@ export type DropDownItemProps<
   isSelectedFn: (option: TOption) => boolean;
 } & MenuSubMenuHandlerProps<TData, TOption> & {
     fRef?: React.Ref<HTMLDivElement>;
-  };
+  } & (
+    | {
+        allowSelectAll?: false | never;
+      }
+    | {
+        allowSelectAll: true;
+        onClearAll: () => void;
+        onSelectAll: () => void;
+      }
+  );
 
 export type ObjectType = Record<string, unknown>;
 export type DropDownDataType<T extends ObjectType> = {
@@ -97,3 +125,15 @@ export type NonVirtualItemsProps<
   | 'renderGroupText'
 > &
   Pick<DropDownItemsWrapperProps<TData, TOption>, 'getOptionKey'>;
+
+export type AllowSelectAllProps =
+  | {
+      allowSelectAll: true;
+      onSelectAll: () => void;
+      onClearAll: () => void;
+      isAllSelected: boolean;
+      isNoItemSelected: boolean;
+    }
+  | {
+      allowSelectAll?: false | never;
+    };

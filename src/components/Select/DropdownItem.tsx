@@ -54,6 +54,7 @@ export const DropDownItem = <
       {...props}
     >
       {renderItem({
+        type: 'option',
         option,
         isSelected: isOptionSelected,
         isMenu,

@@ -1,9 +1,16 @@
 'use client';
-import type { Dispatch, SetStateAction } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
 import DropDownItemsWrapper from './DropDownItemsWrapper';
 import SelectTrigger from './SelectTrigger';
 import type {
+  AllowSelectAllProps,
   CommonSelectProps,
   DropDownDataType,
   MenuSubMenuHandlerProps,
@@ -26,7 +33,7 @@ export type MultiSelectProps<
   values: TOption[];
   setValues: Dispatch<SetStateAction<TOption[]>>;
   renderTrigger?: MultiSelectRenderTriggerProps<TData, TOption>;
-};
+} & Pick<AllowSelectAllProps, 'allowSelectAll'>;
 
 const MultiSelect = <
   TData extends ObjectType,
@@ -41,6 +48,8 @@ const MultiSelect = <
     allOptions: TOption[];
   }) => {
   const { menu } = useDropDownContext();
+  const getOptionKeyFnRef = useRef<typeof getOptionKey | null>(getOptionKey);
+
   const handleItemClick = (option: TOption) => {
     const isSelected = values.some(
       (value) => getOptionKey(value) === getOptionKey(option),
@@ -54,7 +63,6 @@ const MultiSelect = <
     props.setValues([...values, option]);
   };
 
-  // TODO: add ui for select all
   const handleSelectAll = () => {
     const allOptions = props.options.flatMap((option) => {
       if (option.subMenu) {
@@ -95,10 +103,54 @@ const MultiSelect = <
     props.setValues(updatedValues);
   };
 
-  // TODO: add ui for clear all
+  useEffect(() => {
+    getOptionKeyFnRef.current = getOptionKey;
+  });
+
+  const isAllSelected = useMemo(() => {
+    const getOptionKeyFn = getOptionKeyFnRef.current;
+    if (!getOptionKeyFn) {
+      return false;
+    }
+    if (values.length === 0) {
+      return false;
+    }
+    if (!menu) {
+      // if it's on parent menu, check if all options are selected
+      return (
+        values.length ===
+        props.options.flatMap((option) => option.subMenu).length
+      );
+    }
+    // if it's on submenu, check if all options on that submenu are selected
+    const optionKeysSet = new Set(props.options.map(getOptionKeyFn));
+    console.log('optionsKeySet', optionKeysSet);
+    return (
+      values.filter((value) => optionKeysSet.has(getOptionKeyFn(value)))
+        .length === optionKeysSet.size
+    );
+  }, [menu, values, props.options]);
+
+  const isNoItemSelected = useMemo(() => {
+    const getOptionKeyFn = getOptionKeyFnRef.current;
+    if (!getOptionKeyFn) {
+      return false;
+    }
+    if (!menu) {
+      // if it's on parent menu, check if no options are selected
+      return values.length === 0;
+    }
+    // if it's on submenu, check if no options on that submenu are selected
+
+    const optionKeysSet = new Set(props.options.map(getOptionKeyFn));
+    return (
+      values.filter((value) => !optionKeysSet.has(getOptionKeyFn(value)))
+        .length === values.length
+    );
+  }, [menu, values, props.options]);
+
   const handleClearAll = () => {
     // if it's on parent menu, clear all
-    console.log('menu', menu);
     if (!menu) {
       props.setValues([]);
       return;
@@ -139,6 +191,11 @@ const MultiSelect = <
           onItemClick={handleItemClick}
           getOptionKey={getOptionKey}
           isSelectedFn={isSelectedFn}
+          allowSelectAll={props.allowSelectAll}
+          onClearAll={handleClearAll}
+          onSelectAll={handleSelectAll}
+          isAllSelected={isAllSelected}
+          isNoItemSelected={isNoItemSelected}
         />
       )}
     </>

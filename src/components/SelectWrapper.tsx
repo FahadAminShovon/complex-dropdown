@@ -127,49 +127,81 @@ const SelectWrapper = <
           </div>
         );
       }}
-      renderItem={({
-        option,
-        isSelected,
-        isMenu,
-        isAllSubmenuSelected,
-        isPartiallySubmenuSelected,
-      }) => (
-        <div
-          className={cn(
-            'group px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between',
-            {
-              'text-teal-600 dark:text-teal-400':
-                isSelected || isAllSubmenuSelected,
-              'font-medium':
-                isSelected ||
-                isAllSubmenuSelected ||
-                isPartiallySubmenuSelected,
-            },
-          )}
-        >
-          <span className="truncate">{selectLabelFn(option)}</span>
-          <div className="flex items-center ml-2 space-x-2">
-            {(isSelected ||
-              isAllSubmenuSelected ||
-              isPartiallySubmenuSelected) && (
-              <span className="flex items-center justify-center w-5 h-5">
-                {isMenu ? (
-                  isAllSubmenuSelected ? (
-                    <Check className="h-4 w-4" />
-                  ) : isPartiallySubmenuSelected ? (
-                    <Circle className="h-2 w-2 fill-current text-teal-600 dark:text-teal-400" />
-                  ) : null
-                ) : (
-                  <Check className="h-4 w-4" />
+      renderItem={(args) => {
+        if (args.type === 'option') {
+          const {
+            option,
+            isSelected,
+            isMenu,
+            isAllSubmenuSelected,
+            isPartiallySubmenuSelected,
+          } = args;
+          return (
+            <div
+              className={cn(
+                'group px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between',
+                {
+                  'text-teal-600 dark:text-teal-400':
+                    isSelected || isAllSubmenuSelected,
+                  'font-medium':
+                    isSelected ||
+                    isAllSubmenuSelected ||
+                    isPartiallySubmenuSelected,
+                },
+              )}
+            >
+              <span className="truncate">{selectLabelFn(option)}</span>
+              <div className="flex items-center ml-2 space-x-2">
+                {(isSelected ||
+                  isAllSubmenuSelected ||
+                  isPartiallySubmenuSelected) && (
+                  <span className="flex items-center justify-center w-5 h-5">
+                    {isMenu ? (
+                      isAllSubmenuSelected ? (
+                        <Check className="h-4 w-4" />
+                      ) : isPartiallySubmenuSelected ? (
+                        <Circle className="h-2 w-2 fill-current text-teal-600 dark:text-teal-400" />
+                      ) : null
+                    ) : (
+                      <Check className="h-4 w-4" />
+                    )}
+                  </span>
                 )}
-              </span>
-            )}
-            {isMenu && (
-              <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-300 flex-shrink-0 transition-all duration-200 ease-in-out transform group-hover:translate-x-1 group-hover:text-gray-900 group-hover:scale-110 dark:group-hover:text-gray-100" />
-            )}
-          </div>
-        </div>
-      )}
+                {isMenu && (
+                  <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-300 flex-shrink-0 transition-all duration-200 ease-in-out transform group-hover:translate-x-1 group-hover:text-gray-900 group-hover:scale-110 dark:group-hover:text-gray-100" />
+                )}
+              </div>
+            </div>
+          );
+        }
+        if (args.type === 'selectAll') {
+          return (
+            <div
+              className={cn(
+                'group px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between',
+                {
+                  'text-teal-600 dark:text-teal-400': args.isSelected,
+                },
+              )}
+            >
+              <span className="font-medium">Select All</span>
+              {args.isSelected && (
+                <Check className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+              )}
+            </div>
+          );
+        }
+        if (args.type === 'clearAll') {
+          return (
+            <div className="group px-4 py-2 cursor-pointer transition-colors duration-200 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between">
+              <span className="font-medium">Clear All</span>
+              {!args.isNoItemSelected && (
+                <X className="h-4 w-4 text-red-600 dark:text-red-400" />
+              )}
+            </div>
+          );
+        }
+      }}
       renderGroupText={(group) => (
         <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold text-sm uppercase tracking-wide">
           {group}

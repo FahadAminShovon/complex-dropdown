@@ -6,6 +6,7 @@ import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
 import VirtualDropdownItems from './VirtualDropdownItems';
 import type {
+  AllowSelectAllProps,
   DropDownDataType,
   DropDownItemProps,
   DropDownItemsWrapperProps,
@@ -35,9 +36,10 @@ const DropDownItemsWrapper = <
   Pick<
     DropDownItemProps<TData, TOption>,
     'onItemClick' | 'isSelectedFn' | 'onSubMenuContainerClick' | 'onGoBackClick'
-  >) => {
+  > &
+  AllowSelectAllProps) => {
   const [search, setSearch] = useState('');
-  const { menu, isOpen } = useDropDownContext();
+  const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
 
@@ -77,17 +79,6 @@ const DropDownItemsWrapper = <
     );
   }, [filteredOptions, props.groupBy]);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      // focus the input after the dropdown is open
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-    }
-  }, [isOpen]);
-
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
@@ -102,6 +93,30 @@ const DropDownItemsWrapper = <
       >
         <Command>
           <Command.List>
+            {props.allowSelectAll && (
+              <>
+                <Command.Item
+                  asChild
+                  onSelect={props.onSelectAll}
+                  className="block"
+                >
+                  {renderItem({
+                    type: 'selectAll',
+                    isSelected: props.isAllSelected,
+                  })}
+                </Command.Item>
+                <Command.Item
+                  asChild
+                  onSelect={props.onClearAll}
+                  className="block"
+                >
+                  {renderItem({
+                    type: 'clearAll',
+                    isNoItemSelected: props.isNoItemSelected,
+                  })}
+                </Command.Item>
+              </>
+            )}
             {props.search && (
               <Command.Input
                 value={search}
