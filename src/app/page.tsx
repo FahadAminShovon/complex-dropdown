@@ -74,6 +74,7 @@ export default function Home() {
         setValue={setValue}
         getOptionKey={(option) => option?.value ?? ''}
         selectLabelFn={(option) => option?.label}
+        label="Single Select"
         // virtualize
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}
@@ -91,6 +92,7 @@ export default function Home() {
         setValues={setValues}
         getOptionKey={(option) => option?.value ?? ''}
         selectLabelFn={(option) => option?.label}
+        label="Multi Select"
         // virtualize
         // search={true}
         // searchBy={({ option, search }) => option.label.includes(search)}
@@ -98,7 +100,7 @@ export default function Home() {
         // renderMenuText={(menu) => menu?.label ?? ''}
         // allowSelectAll
         // align="start"
-        clearable
+        // clearable
         // selectWidth={'[--select-width:800px]'}
       />
     </div>

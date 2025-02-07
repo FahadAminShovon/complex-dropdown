@@ -36,6 +36,17 @@ type SelectWrapperProps<
   containerClassName?: string;
   selectWidth?: `[--select-width:${string}]`;
   clearable?: boolean;
+  label?: React.ReactNode | string;
+};
+const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
+  if (typeof label === 'string') {
+    return (
+      <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        {label}
+      </span>
+    );
+  }
+  return label;
 };
 
 const SelectWrapper = <
@@ -50,6 +61,7 @@ const SelectWrapper = <
   containerClassName,
   selectWidth,
   clearable,
+  label,
   ...props
 }: SelectWrapperProps<TData, TOption>) => {
   const handleClear = (e: React.MouseEvent) => {
@@ -63,6 +75,7 @@ const SelectWrapper = <
 
   return (
     <Select
+      label={<StyledLabel label={label} />}
       renderTrigger={(args: unknown) => {
         const baseClasses =
           'cursor-pointer border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 w-full min-w-[200px] bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 shadow-sm flex items-center';

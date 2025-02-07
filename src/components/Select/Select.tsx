@@ -18,13 +18,16 @@ export type SelectProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 > = CommonSelectProps<TData, TOption> &
-  (SingleSelectProps<TData, TOption> | MultiSelectProps<TData, TOption>);
+  (SingleSelectProps<TData, TOption> | MultiSelectProps<TData, TOption>) & {
+    label?: React.ReactNode;
+  };
 
 const Select = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
 >({
   options,
+  label,
   ...props
 }: SelectProps<TData, TOption>) => {
   const [selectedOptions, setSelectedOptions] = useState<{
@@ -75,27 +78,30 @@ const Select = <
       openDropDown={openDropDown}
       closeDropDown={closeDropDown}
     >
-      <PopoverPrimitive.Root open={isOpen}>
-        {props.multiple && (
-          <MultiSelect
-            {...props}
-            // current options
-            options={selectedOptions.subMenu}
-            // all options
-            allOptions={options}
-            onSubMenuContainerClick={onSubMenuContainerClick}
-            onGoBackClick={onGoBackClick}
-          />
-        )}
-        {!props.multiple && (
-          <SingleSelect
-            {...props}
-            options={selectedOptions.subMenu}
-            onSubMenuContainerClick={onSubMenuContainerClick}
-            onGoBackClick={onGoBackClick}
-          />
-        )}
-      </PopoverPrimitive.Root>
+      <div className="w-full space-y-1">
+        {label}
+        <PopoverPrimitive.Root open={isOpen}>
+          {props.multiple && (
+            <MultiSelect
+              {...props}
+              // current options
+              options={selectedOptions.subMenu}
+              // all options
+              allOptions={options}
+              onSubMenuContainerClick={onSubMenuContainerClick}
+              onGoBackClick={onGoBackClick}
+            />
+          )}
+          {!props.multiple && (
+            <SingleSelect
+              {...props}
+              options={selectedOptions.subMenu}
+              onSubMenuContainerClick={onSubMenuContainerClick}
+              onGoBackClick={onGoBackClick}
+            />
+          )}
+        </PopoverPrimitive.Root>
+      </div>
     </DropDownContextProvider>
   );
 };

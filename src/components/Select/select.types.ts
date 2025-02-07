@@ -44,8 +44,6 @@ export type DropDownItemsWrapperProps<
   virtualize?: boolean;
   optionsContainerClassName?: string;
   searchInputClassName?: string;
-  onSelectAll?: () => void;
-  onClearAll?: () => void;
 } & Pick<PopoverContentProps, 'align'> &
   (
     | {
