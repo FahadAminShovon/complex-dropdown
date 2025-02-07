@@ -93,9 +93,9 @@ export default function Home() {
         virtualize
         search={true}
         searchBy={({ option, search }) => option.label.includes(search)}
-        // groupBy={(option) => option.category ?? ''}
+        groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
-        // allowSelectAll
+        allowSelectAll
         // align="start"
         // selectWidth={'[--select-width:800px]'}
       />

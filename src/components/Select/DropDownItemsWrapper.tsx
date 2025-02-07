@@ -42,7 +42,6 @@ const DropDownItemsWrapper = <
   const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
-
   const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
   // doesn't expect searchBy function to be memoized
@@ -94,7 +93,7 @@ const DropDownItemsWrapper = <
         <Command>
           <Command.List>
             {props.allowSelectAll && (
-              <>
+              <Command.Group>
                 <Command.Item
                   asChild
                   onSelect={props.onSelectAll}
@@ -115,15 +114,25 @@ const DropDownItemsWrapper = <
                     isNoItemSelected: props.isNoItemSelected,
                   })}
                 </Command.Item>
-              </>
+                <Command.Separator />
+              </Command.Group>
             )}
             {props.search && (
-              <Command.Input
-                value={search}
-                onValueChange={setSearch}
-                className={searchInputClassName}
-                autoFocus
-              />
+              <>
+                <Command.Item asChild>
+                  <input
+                    value={search}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setSearch(e.target.value);
+                    }}
+                    className={searchInputClassName}
+                    // biome-ignore lint/a11y/noAutofocus: <explanation>
+                    autoFocus
+                  />
+                </Command.Item>
+                <Command.Separator />
+              </>
             )}
             {menu && (
               <Command.Item asChild onSelect={onGoBackClick}>
