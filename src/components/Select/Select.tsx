@@ -1,7 +1,7 @@
 'use client';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DropDownContextProvider } from './DropDownContextProvider';
 import type { MultiSelectProps } from './MultiSelect';
 import MultiSelect from './MultiSelect';
@@ -109,17 +109,20 @@ const Select = <
     subMenu: options,
   });
   const [isOpen, setIsOpen] = useState(false);
-  const openDropDown = () => setIsOpen(true);
-  const closeDropDown = () => setIsOpen(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setSelectedOptions({
-        menu: null,
-        subMenu: options,
-      });
-    }
-  }, [isOpen, options]);
+  const openDropDown = () => {
+    setIsOpen(true);
+    setSelectedOptions({
+      menu: null,
+      subMenu: options,
+    });
+  };
+  const closeDropDown = () => {
+    setIsOpen(false);
+    setSelectedOptions({
+      menu: null,
+      subMenu: options,
+    });
+  };
 
   const onSubMenuContainerClick: MenuSubMenuHandlerProps<
     TData,
