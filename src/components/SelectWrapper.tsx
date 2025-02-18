@@ -49,6 +49,62 @@ const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
   return label;
 };
 
+/**
+ * A styled wrapper for the Select component that provides a consistent UI with additional features
+ * like clearable selections and custom styling options.
+ *
+ * @example
+ * // Basic single select with custom styling
+ * const [value, setValue] = useState<Option | null>(null);
+ *
+ * <SelectWrapper
+ *   options={options}
+ *   value={value}
+ *   setValue={setValue}
+ *   getOptionKey={(option) => option.id}
+ *   selectLabelFn={(option) => option.label}
+ *   placeholder="Choose an option..."
+ *   clearable
+ *   label="Select Item"
+ *   containerClassName="max-w-md"
+ * />
+ *
+ * @example
+ * // Multi-select with groups and custom width
+ * const [values, setValues] = useState<Option[]>([]);
+ *
+ * <SelectWrapper
+ *   multiple
+ *   options={options}
+ *   values={values}
+ *   setValues={setValues}
+ *   getOptionKey={(option) => option.id}
+ *   selectLabelFn={(option) => option.label}
+ *   groupBy={(option) => option.category}
+ *   search
+ *   searchBy={({ option, search }) =>
+ *     option.label.toLowerCase().includes(search.toLowerCase())
+ *   }
+ *   selectWidth="[--select-width:400px]"
+ *   renderMenuText={(menu) => menu?.label || 'Main Menu'}
+ * />
+ *
+ * @template TData - Base object type for the options
+ * @template TOption - Extended option type that can include menu/submenu structure
+ *
+ * @param props - Component props that extend the base Select props
+ * @param props.selectLabelFn - Function to render the label for each option
+ * @param props.renderMenuText - Optional function to render custom menu header text
+ * @param props.placeholder - Placeholder text when no option is selected
+ * @param props.containerClassName - Additional classes for the select container
+ * @param props.selectWidth - Custom width using CSS variable (format: [--select-width:value])
+ * @param props.clearable - Enable option to clear selection
+ * @param props.label - Label text or node to display above the select
+ * @param props.optionsContainerClassName - Custom classes for the options dropdown container
+ * @param props.searchInputClassName - Custom classes for the search input
+ *
+ * @returns A styled Select component with enhanced functionality
+ */
 const SelectWrapper = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
