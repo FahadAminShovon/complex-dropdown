@@ -240,6 +240,7 @@ const SelectWrapper = <
             isMenu,
             isAllSubmenuSelected,
             isPartiallySubmenuSelected,
+            isDisabled,
           } = args;
           return (
             <div
@@ -252,6 +253,8 @@ const SelectWrapper = <
                     isSelected ||
                     isAllSubmenuSelected ||
                     isPartiallySubmenuSelected,
+                  'opacity-50 cursor-not-allowed hover:bg-transparent dark:hover:bg-transparent':
+                    isDisabled,
                 },
               )}
             >

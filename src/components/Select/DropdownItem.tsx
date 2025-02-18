@@ -1,7 +1,10 @@
 import { Command } from 'cmdk';
 import { useDropDownContext } from './DropDownContextProvider';
-import type { DropDownItemProps } from './select.types';
-import type { DropDownDataType, ObjectType } from './select.types';
+import type {
+  DropDownDataType,
+  DropDownItemProps,
+  ObjectType,
+} from './select.types';
 
 export const DropDownItem = <
   TData extends ObjectType,
@@ -41,6 +44,7 @@ export const DropDownItem = <
       ref={fRef}
       data-index={dataIndex}
       onSelect={() => {
+        if (option.disabled) return;
         if (option.subMenu) {
           onSubMenuContainerClick({
             menu: option,
@@ -60,6 +64,7 @@ export const DropDownItem = <
         isMenu,
         isAllSubmenuSelected,
         isPartiallySubmenuSelected,
+        isDisabled: Boolean(option.disabled),
       })}
     </Command.Item>
   );

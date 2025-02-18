@@ -8,6 +8,7 @@ type OptionType = {
   category?: string;
   subMenu?: OptionType[];
   menu?: OptionType;
+  disabled?: boolean;
 };
 
 const dummyData: OptionType[] = [
@@ -20,6 +21,7 @@ const dummyData: OptionType[] = [
         label: 'sub label 1',
         value: 'sub value 1',
         category: 'category 3',
+        disabled: true,
       },
       {
         label: 'sub label 2',

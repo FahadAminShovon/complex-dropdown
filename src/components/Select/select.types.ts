@@ -20,6 +20,7 @@ type RenderItemType<
         isMenu: boolean;
         isAllSubmenuSelected: boolean;
         isPartiallySubmenuSelected: boolean;
+        isDisabled: boolean;
       }
     | {
         type: 'selectAll';
@@ -81,6 +82,7 @@ export type ObjectType = Record<string, unknown>;
 export type DropDownDataType<T extends ObjectType> = {
   menu?: T | null;
   subMenu?: T[] | null;
+  disabled?: boolean;
 } & T;
 
 export type MenuSubMenuHandlerProps<
