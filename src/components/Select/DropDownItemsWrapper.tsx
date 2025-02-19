@@ -59,7 +59,11 @@ const DropDownItemsWrapper = <
 
     return options.filter((option, index) => {
       if (searchFnRef.current) {
-        return searchFnRef.current({ option, index, search: deferredSearch });
+        return searchFnRef.current({
+          option,
+          index,
+          search: deferredSearch.trim(),
+        });
       }
       return false;
     });
