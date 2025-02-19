@@ -30,7 +30,7 @@ export const DropDownItem = <
 }) => {
   const { menu } = useDropDownContext();
   const isMenu = option.subMenu != null && option.subMenu.length > 0;
-  const isOptionSelected = isSelectedFn(option);
+  const isOptionSelected = isMenu ? false : isSelectedFn(option);
 
   const isAllSubmenuSelected = isMenu
     ? (option.subMenu?.every((subMenu) => isSelectedFn(subMenu as any)) ??
