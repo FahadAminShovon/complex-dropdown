@@ -14,6 +14,7 @@ import type { DropDownDataType, ObjectType } from './Select';
 import type { MultiSelectRenderTriggerProps } from './Select/MultiSelect';
 import type { SelectProps } from './Select/Select';
 import type { SingleSelectRenderTriggerProps } from './Select/SingleSelect';
+import type { SearchByFn } from './Select/select.types';
 
 type SelectLabelFn<
   TData extends ObjectType,
@@ -28,7 +29,10 @@ type RenderMenuTextFn<
 type SelectWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = DistributedOmit<SelectProps<TData, TOption>, 'renderItem'> & {
+> = DistributedOmit<
+  SelectProps<TData, TOption>,
+  'renderItem' | 'searchBy' | 'search'
+> & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
   selectLabelFn: SelectLabelFn<TData, TOption>;
   renderMenuText?: RenderMenuTextFn<TData, TOption>;
@@ -37,7 +41,13 @@ type SelectWrapperProps<
   selectWidth?: `[--select-width:${string}]`;
   clearable?: boolean;
   label?: React.ReactNode | string;
-};
+} & (
+    | {
+        search: true;
+        searchBy?: SearchByFn<TOption>;
+      }
+    | { search?: false | never }
+  );
 const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
   if (typeof label === 'string') {
     return (
@@ -128,6 +138,30 @@ const SelectWrapper = <
       props.setValue(null);
     }
   };
+
+  const searchProps = props.search
+    ? {
+        searchBy:
+          props.searchBy ??
+          (({ search, option }) => {
+            const searchString = search.toLowerCase();
+            return (
+              selectLabelFn(option)
+                ?.toString()
+                .toLowerCase()
+                .includes(searchString) ||
+              option?.subMenu?.some((subItem) => {
+                const subItemString = selectLabelFn(subItem as any)
+                  ?.toString()
+                  .toLowerCase();
+                return subItemString?.includes(searchString);
+              }) ||
+              false
+            );
+          }),
+        search: true as const,
+      }
+    : { search: false as const };
 
   return (
     <Select
@@ -336,6 +370,7 @@ const SelectWrapper = <
         searchInputClassName,
       )}
       {...props}
+      {...searchProps}
     />
   );
 };
