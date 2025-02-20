@@ -1,10 +1,5 @@
 import type { PopoverContentProps } from '@radix-ui/react-popover';
-
-export type SearchByFn<T extends ObjectType> = (obj: {
-  option: T;
-  index: number;
-  search: string;
-}) => boolean;
+import type { Paths } from 'type-fest';
 
 type GroupByFn<T extends ObjectType> = (option: T) => string;
 
@@ -49,7 +44,7 @@ export type DropDownItemsWrapperProps<
   (
     | {
         search: true;
-        searchBy: SearchByFn<TOption>;
+        searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
       }
     | {
         search?: false | never;

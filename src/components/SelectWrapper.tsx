@@ -7,14 +7,13 @@ import {
   X,
 } from 'lucide-react';
 import type React from 'react';
-import type { DistributedOmit } from 'type-fest';
+import type { DistributedOmit, Paths } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
 import type { MultiSelectRenderTriggerProps } from './Select/MultiSelect';
 import type { SelectProps } from './Select/Select';
 import type { SingleSelectRenderTriggerProps } from './Select/SingleSelect';
-import type { SearchByFn } from './Select/select.types';
 
 type SelectLabelFn<
   TData extends ObjectType,
@@ -31,7 +30,7 @@ type SelectWrapperProps<
   TOption extends DropDownDataType<TData>,
 > = DistributedOmit<
   SelectProps<TData, TOption>,
-  'renderItem' | 'searchBy' | 'search'
+  'renderItem' | 'search' | 'searchKeys'
 > & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
   selectLabelFn: SelectLabelFn<TData, TOption>;
@@ -44,7 +43,7 @@ type SelectWrapperProps<
 } & (
     | {
         search: true;
-        searchBy?: SearchByFn<TOption>;
+        searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
       }
     | { search?: false | never }
   );
@@ -141,25 +140,14 @@ const SelectWrapper = <
 
   const searchProps = props.search
     ? {
-        searchBy:
-          props.searchBy ??
-          (({ search, option }) => {
-            const searchString = search.toLowerCase();
-            return (
-              selectLabelFn(option)
-                ?.toString()
-                .toLowerCase()
-                .includes(searchString) ||
-              option?.subMenu?.some((subItem) => {
-                const subItemString = selectLabelFn(subItem as any)
-                  ?.toString()
-                  .toLowerCase();
-                return subItemString?.includes(searchString);
-              }) ||
-              false
-            );
-          }),
         search: true as const,
+        searchKeys: props.searchKeys.concat(
+          props.options.flatMap((_, idx) =>
+            props.searchKeys.map((key) => {
+              return `subMenu.${idx}.${key}`;
+            }),
+          ) as any,
+        ),
       }
     : { search: false as const };
 

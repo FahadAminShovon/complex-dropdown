@@ -1,17 +1,18 @@
 'use client';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Command } from 'cmdk';
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { matchSorter } from 'match-sorter';
+import { useDeferredValue, useMemo, useState } from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
 import VirtualDropdownItems from './VirtualDropdownItems';
+
 import type {
   AllowSelectAllProps,
   DropDownDataType,
   DropDownItemProps,
   DropDownItemsWrapperProps,
   ObjectType,
-  SearchByFn,
 } from './select.types';
 
 const DropDownItemsWrapper = <
@@ -42,32 +43,18 @@ const DropDownItemsWrapper = <
   const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
-  const searchFnRef = useRef<SearchByFn<TOption> | null>(null);
 
-  // doesn't expect searchBy function to be memoized
-  useEffect(() => {
-    if (props.search) {
-      searchFnRef.current = props.searchBy;
-    } else {
-      searchFnRef.current = null;
-    }
-  });
+  const searchKeysString = JSON.stringify(props.search ? props.searchKeys : []);
 
   const filteredOptions = useMemo(() => {
     if (!props.search) return options;
     if (!deferredSearch) return options;
+    const searchKeys = JSON.parse(searchKeysString);
 
-    return options.filter((option, index) => {
-      if (searchFnRef.current) {
-        return searchFnRef.current({
-          option,
-          index,
-          search: deferredSearch.trim(),
-        });
-      }
-      return false;
+    return matchSorter(options, deferredSearch, {
+      keys: searchKeys,
     });
-  }, [deferredSearch, options, props.search]);
+  }, [deferredSearch, options, props.search, searchKeysString]);
 
   const groupedOptions = useMemo(() => {
     const groupByFn = props.groupBy;

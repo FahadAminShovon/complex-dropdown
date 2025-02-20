@@ -77,9 +77,10 @@ export default function Home() {
         getOptionKey={(option) => option?.value ?? ''}
         selectLabelFn={(option) => option?.label}
         label="Single Select"
+        search
+        searchKeys={['label']}
         // virtualize
         // search={true}
-        // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
         // align="start"
@@ -97,7 +98,6 @@ export default function Home() {
         label="Multi Select"
         // virtualize
         // search={true}
-        // searchBy={({ option, search }) => option.label.includes(search)}
         // groupBy={(option) => option.category ?? ''}
         // renderMenuText={(menu) => menu?.label ?? ''}
         // allowSelectAll
