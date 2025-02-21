@@ -1,11 +1,12 @@
 'use client';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Command } from 'cmdk';
-import { matchSorter } from 'match-sorter';
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
 import VirtualDropdownItems from './VirtualDropdownItems';
+import { getFilterOptions } from './filterOptions';
+import { getFilterOptionsAsync } from './filterOptionsAsync';
 
 import type {
   AllowSelectAllProps,
@@ -40,21 +41,50 @@ const DropDownItemsWrapper = <
   > &
   AllowSelectAllProps) => {
   const [search, setSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState<TOption[]>(options);
   const { menu } = useDropDownContext();
   const deferredSearch = useDeferredValue(search);
   const { closeDropDown } = useDropDownContext();
 
   const searchKeysString = JSON.stringify(props.search ? props.searchKeys : []);
+  const isAsyncSearch = props.search && props.asyncSearch;
 
-  const filteredOptions = useMemo(() => {
-    if (!props.search) return options;
-    if (!deferredSearch) return options;
+  // Handle sync filtering
+  useEffect(() => {
+    if (!props.search) {
+      setFilteredOptions(options);
+      return;
+    }
+
     const searchKeys = JSON.parse(searchKeysString);
 
-    return matchSorter(options, deferredSearch, {
-      keys: searchKeys,
-    });
-  }, [deferredSearch, options, props.search, searchKeysString]);
+    if (isAsyncSearch) {
+      // Skip sync filtering if async search is enabled
+      return;
+    }
+
+    const filtered = getFilterOptions(options, deferredSearch, searchKeys);
+    setFilteredOptions(filtered);
+  }, [deferredSearch, isAsyncSearch, props.search, searchKeysString, options]);
+
+  // Handle async filtering
+  useEffect(() => {
+    if (!isAsyncSearch || !deferredSearch) {
+      return;
+    }
+
+    const searchKeys = JSON.parse(searchKeysString);
+
+    setIsLoading(true);
+    getFilterOptionsAsync(options, deferredSearch, searchKeys)
+      .then((filtered) => {
+        setFilteredOptions(filtered);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [deferredSearch, isAsyncSearch, options, searchKeysString]);
 
   const groupedOptions = useMemo(() => {
     const groupByFn = props.groupBy;
@@ -111,16 +141,24 @@ const DropDownItemsWrapper = <
             {props.search && (
               <>
                 <Command.Item asChild>
-                  <input
-                    value={search}
-                    onChange={(e) => {
-                      e.preventDefault();
-                      setSearch(e.target.value);
-                    }}
-                    className={searchInputClassName}
-                    // biome-ignore lint/a11y/noAutofocus: <explanation>
-                    autoFocus
-                  />
+                  <div className="relative">
+                    <input
+                      value={search}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        setSearch(e.target.value);
+                      }}
+                      className={searchInputClassName}
+                      // biome-ignore lint/a11y/noAutofocus: <explanation>
+                      autoFocus
+                    />
+                    {isLoading && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        {/* Add your loading spinner here */}
+                        Loading...
+                      </div>
+                    )}
+                  </div>
                 </Command.Item>
                 <Command.Separator />
               </>

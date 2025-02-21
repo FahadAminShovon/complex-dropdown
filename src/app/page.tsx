@@ -78,7 +78,8 @@ export default function Home() {
         selectLabelFn={(option) => option?.label}
         label="Single Select"
         search
-        searchKeys={['label', 'value']}
+        searchKeys={['label']}
+        asyncSearch
         // virtualize
         // search={true}
         // groupBy={(option) => option.category ?? ''}

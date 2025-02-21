@@ -7,7 +7,7 @@ import {
   X,
 } from 'lucide-react';
 import type React from 'react';
-import type { DistributedOmit } from 'type-fest';
+import type { DistributedOmit, Paths } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
@@ -28,7 +28,10 @@ type RenderMenuTextFn<
 type SelectWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = DistributedOmit<SelectProps<TData, TOption>, 'renderItem'> & {
+> = DistributedOmit<
+  SelectProps<TData, TOption>,
+  'renderItem' | 'search' | 'searchKeys'
+> & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
   selectLabelFn: SelectLabelFn<TData, TOption>;
   renderMenuText?: RenderMenuTextFn<TData, TOption>;
@@ -37,7 +40,13 @@ type SelectWrapperProps<
   selectWidth?: `[--select-width:${string}]`;
   clearable?: boolean;
   label?: React.ReactNode | string;
-};
+} & (
+    | {
+        search: true;
+        searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
+      }
+    | { search?: false | never }
+  );
 const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
   if (typeof label === 'string') {
     return (
@@ -132,23 +141,25 @@ const SelectWrapper = <
   const searchProps = props.search
     ? {
         search: true as const,
-        searchKeys: props.options.reduce(
-          (acc, option, idx) => {
-            if (option.subMenu?.length) {
-              for (const key of props.searchKeys) {
-                acc.push(`subMenu.${idx}.${key}` as any);
-              }
-            }
-            return acc;
-          },
-          [...props.searchKeys],
-        ),
-      }
-    : { search: false as const };
+        searchKeys: (() => {
+          // Get the base search keys from props
+          const baseSearchKeys = props.searchKeys;
 
-  if (props.search) {
-    console.log('searchProps', searchProps);
-  }
+          // Generate search keys for each submenu item
+          const submenuSearchKeys = props.options.flatMap((_, optionIndex) => {
+            // For each base search key, create a corresponding submenu search key
+            return baseSearchKeys.map(
+              (searchKey) => `subMenu.${optionIndex}.${searchKey}`,
+            );
+          });
+
+          // Combine base keys with submenu keys
+          return [...baseSearchKeys, ...submenuSearchKeys] as any[];
+        })(),
+      }
+    : {
+        search: false as const,
+      };
 
   return (
     <Select
