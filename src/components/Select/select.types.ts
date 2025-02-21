@@ -41,18 +41,17 @@ export type DropDownItemsWrapperProps<
   optionsContainerClassName?: string;
   searchInputClassName?: string;
 } & Pick<PopoverContentProps, 'align'> &
-  ((
+  (
     | {
         search: true;
         searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
         asyncSearch?: boolean;
+        debounceTime?: number;
       }
     | {
         search?: false | never;
       }
-  ) & {
-    debounceTime?: number;
-  });
+  );
 
 export type DropDownItemProps<
   TData extends ObjectType,
