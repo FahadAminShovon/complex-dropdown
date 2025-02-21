@@ -145,13 +145,19 @@ const SelectWrapper = <
           // Get the base search keys from props
           const baseSearchKeys = props.searchKeys;
 
-          // Generate search keys for each submenu item
-          const submenuSearchKeys = props.options.flatMap((_, optionIndex) => {
-            // For each base search key, create a corresponding submenu search key
-            return baseSearchKeys.map(
-              (searchKey) => `subMenu.${optionIndex}.${searchKey}`,
-            );
-          });
+          // Get the maximum number of submenu items
+          const maxSubmenuLength = props.options.reduce((max, option) => {
+            return Math.max(max, option.subMenu?.length ?? 0);
+          }, 0);
+
+          const submenuSearchKeys = Array.from(
+            { length: maxSubmenuLength },
+            (_, index) => {
+              return baseSearchKeys.map(
+                (searchKey) => `subMenu.${index}.${searchKey}`,
+              );
+            },
+          ).flat();
 
           // Combine base keys with submenu keys
           return [...baseSearchKeys, ...submenuSearchKeys] as any[];
