@@ -80,6 +80,7 @@ export default function Home() {
         search
         searchKeys={['label']}
         asyncSearch
+        debounceTime={200}
         // virtualize
         // search={true}
         // groupBy={(option) => option.category ?? ''}

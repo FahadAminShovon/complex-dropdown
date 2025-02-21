@@ -2,6 +2,7 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Command } from 'cmdk';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
 import VirtualDropdownItems from './VirtualDropdownItems';
@@ -44,7 +45,11 @@ const DropDownItemsWrapper = <
   const [isLoading, setIsLoading] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<TOption[]>(options);
   const { menu } = useDropDownContext();
-  const deferredSearch = useDeferredValue(search);
+  const [debouncedSearch] = useDebounce(
+    search,
+    props.search ? props.debounceTime || 0 : 0,
+  );
+  const deferredSearch = useDeferredValue(debouncedSearch);
   const { closeDropDown } = useDropDownContext();
 
   const searchKeysString = JSON.stringify(props.search ? props.searchKeys : []);
@@ -57,12 +62,17 @@ const DropDownItemsWrapper = <
       return;
     }
 
-    const searchKeys = JSON.parse(searchKeysString);
-
     if (isAsyncSearch) {
       // Skip sync filtering if async search is enabled
       return;
     }
+
+    if (!deferredSearch) {
+      setFilteredOptions(options);
+      return;
+    }
+
+    const searchKeys = JSON.parse(searchKeysString);
 
     const filtered = getFilterOptions(options, deferredSearch, searchKeys);
     setFilteredOptions(filtered);
@@ -70,7 +80,12 @@ const DropDownItemsWrapper = <
 
   // Handle async filtering
   useEffect(() => {
-    if (!isAsyncSearch || !deferredSearch) {
+    if (!isAsyncSearch) {
+      return;
+    }
+
+    if (!deferredSearch) {
+      setFilteredOptions(options);
       return;
     }
 
