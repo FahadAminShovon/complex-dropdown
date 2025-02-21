@@ -7,7 +7,7 @@ import {
   X,
 } from 'lucide-react';
 import type React from 'react';
-import type { DistributedOmit, Paths } from 'type-fest';
+import type { DistributedOmit } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
@@ -28,10 +28,7 @@ type RenderMenuTextFn<
 type SelectWrapperProps<
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
-> = DistributedOmit<
-  SelectProps<TData, TOption>,
-  'renderItem' | 'search' | 'searchKeys'
-> & {
+> = DistributedOmit<SelectProps<TData, TOption>, 'renderItem'> & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
   selectLabelFn: SelectLabelFn<TData, TOption>;
   renderMenuText?: RenderMenuTextFn<TData, TOption>;
@@ -40,13 +37,7 @@ type SelectWrapperProps<
   selectWidth?: `[--select-width:${string}]`;
   clearable?: boolean;
   label?: React.ReactNode | string;
-} & (
-    | {
-        search: true;
-        searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
-      }
-    | { search?: false | never }
-  );
+};
 const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
   if (typeof label === 'string') {
     return (
@@ -141,15 +132,23 @@ const SelectWrapper = <
   const searchProps = props.search
     ? {
         search: true as const,
-        searchKeys: props.searchKeys.concat(
-          props.options.flatMap((_, idx) =>
-            props.searchKeys.map((key) => {
-              return `subMenu.${idx}.${key}`;
-            }),
-          ) as any,
+        searchKeys: props.options.reduce(
+          (acc, option, idx) => {
+            if (option.subMenu?.length) {
+              for (const key of props.searchKeys) {
+                acc.push(`subMenu.${idx}.${key}` as any);
+              }
+            }
+            return acc;
+          },
+          [...props.searchKeys],
         ),
       }
     : { search: false as const };
+
+  if (props.search) {
+    console.log('searchProps', searchProps);
+  }
 
   return (
     <Select
