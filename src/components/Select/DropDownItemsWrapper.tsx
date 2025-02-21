@@ -52,7 +52,20 @@ const DropDownItemsWrapper = <
   const deferredSearch = useDeferredValue(debouncedSearch);
   const { closeDropDown } = useDropDownContext();
 
-  const searchKeysString = JSON.stringify(props.search ? props.searchKeys : []);
+  const searchKeysString = (() => {
+    if (props.search) {
+      if (!menu) {
+        // if parent menu is not present, we need to search the submenu
+        return JSON.stringify([
+          ...props.searchKeys,
+          ...props.searchSubMenuKeys,
+        ]);
+      }
+      return JSON.stringify(props.searchKeys);
+    }
+    return JSON.stringify([]);
+  })();
+
   const isAsyncSearch = props.search && props.asyncSearch;
 
   // Handle sync filtering

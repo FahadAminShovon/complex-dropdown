@@ -2,6 +2,7 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
 import { useState } from 'react';
+import type { DistributedOmit } from 'type-fest';
 import { DropDownContextProvider } from './DropDownContextProvider';
 import type { MultiSelectProps } from './MultiSelect';
 import MultiSelect from './MultiSelect';
@@ -100,7 +101,7 @@ const Select = <
   options,
   label,
   ...props
-}: SelectProps<TData, TOption>) => {
+}: DistributedOmit<SelectProps<TData, TOption>, 'searchSubMenuKeys'>) => {
   const [selectedOptions, setSelectedOptions] = useState<{
     menu: TOption | null;
     subMenu: TOption[];
@@ -144,6 +145,35 @@ const Select = <
     });
   };
 
+  const searchProps = props.search
+    ? {
+        search: true as const,
+        searchKeys: props.searchKeys,
+        searchSubMenuKeys: (() => {
+          // Get the base search keys from props
+          const baseSearchKeys = props.searchKeys;
+
+          // Get the maximum number of submenu items
+          const maxSubmenuLength = options.reduce((max, option) => {
+            return Math.max(max, option.subMenu?.length ?? 0);
+          }, 0);
+
+          const submenuSearchKeys = Array.from(
+            { length: maxSubmenuLength },
+            (_, index) => {
+              return baseSearchKeys.map(
+                (searchKey) => `subMenu.${index}.${searchKey}`,
+              );
+            },
+          ).flat();
+
+          return submenuSearchKeys as any[];
+        })(),
+      }
+    : {
+        search: false as const,
+      };
+
   return (
     <DropDownContextProvider
       menu={selectedOptions.menu}
@@ -158,6 +188,7 @@ const Select = <
           {props.multiple && (
             <MultiSelect
               {...props}
+              {...searchProps}
               // current options
               options={selectedOptions.subMenu}
               // all options
@@ -169,6 +200,7 @@ const Select = <
           {!props.multiple && (
             <SingleSelect
               {...props}
+              {...searchProps}
               options={selectedOptions.subMenu}
               onSubMenuContainerClick={onSubMenuContainerClick}
               onGoBackClick={onGoBackClick}

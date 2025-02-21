@@ -45,6 +45,7 @@ export type DropDownItemsWrapperProps<
     | {
         search: true;
         searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
+        searchSubMenuKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
         asyncSearch?: boolean;
         debounceTime?: number;
       }

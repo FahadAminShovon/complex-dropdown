@@ -7,7 +7,7 @@ import {
   X,
 } from 'lucide-react';
 import type React from 'react';
-import type { DistributedOmit, Paths } from 'type-fest';
+import type { DistributedOmit } from 'type-fest';
 import { cn } from '../../lib/utils';
 import { Select } from './Select';
 import type { DropDownDataType, ObjectType } from './Select';
@@ -30,7 +30,7 @@ type SelectWrapperProps<
   TOption extends DropDownDataType<TData>,
 > = DistributedOmit<
   SelectProps<TData, TOption>,
-  'renderItem' | 'search' | 'searchKeys'
+  'renderItem' | 'searchSubMenuKeys'
 > & {
   renderItem?: SelectProps<TData, TOption>['renderItem'];
   selectLabelFn: SelectLabelFn<TData, TOption>;
@@ -40,13 +40,8 @@ type SelectWrapperProps<
   selectWidth?: `[--select-width:${string}]`;
   clearable?: boolean;
   label?: React.ReactNode | string;
-} & (
-    | {
-        search: true;
-        searchKeys: Paths<Omit<TOption, 'menu' | 'subMenu'>>[];
-      }
-    | { search?: false | never }
-  );
+};
+
 const StyledLabel = ({ label }: { label?: React.ReactNode }) => {
   if (typeof label === 'string') {
     return (
@@ -137,35 +132,6 @@ const SelectWrapper = <
       props.setValue(null);
     }
   };
-
-  const searchProps = props.search
-    ? {
-        search: true as const,
-        searchKeys: (() => {
-          // Get the base search keys from props
-          const baseSearchKeys = props.searchKeys;
-
-          // Get the maximum number of submenu items
-          const maxSubmenuLength = props.options.reduce((max, option) => {
-            return Math.max(max, option.subMenu?.length ?? 0);
-          }, 0);
-
-          const submenuSearchKeys = Array.from(
-            { length: maxSubmenuLength },
-            (_, index) => {
-              return baseSearchKeys.map(
-                (searchKey) => `subMenu.${index}.${searchKey}`,
-              );
-            },
-          ).flat();
-
-          // Combine base keys with submenu keys
-          return [...baseSearchKeys, ...submenuSearchKeys] as any[];
-        })(),
-      }
-    : {
-        search: false as const,
-      };
 
   return (
     <Select
@@ -374,7 +340,7 @@ const SelectWrapper = <
         searchInputClassName,
       )}
       {...props}
-      {...searchProps}
+      // {...searchProps}
     />
   );
 };
