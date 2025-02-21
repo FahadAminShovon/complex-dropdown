@@ -12,7 +12,6 @@ export async function getFilterOptionsAsync<
   searchKeys: string[],
 ): Promise<TOption[]> {
   // Simulate server delay
-  await new Promise((resolve) => setTimeout(resolve, 100));
 
   if (!search) return options;
 
