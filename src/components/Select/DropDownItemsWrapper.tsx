@@ -44,7 +44,7 @@ const DropDownItemsWrapper = <
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<TOption[]>(options);
-  const { menu } = useDropDownContext();
+  const { menu, triggerId } = useDropDownContext();
   const [debouncedSearch] = useDebounce(
     search,
     props.search ? props.debounceTime || 0 : 0,
@@ -132,8 +132,12 @@ const DropDownItemsWrapper = <
       <PopoverPrimitive.Content
         sideOffset={align === 'center' ? 5 : 2}
         onPointerDownOutside={(e) => {
-          e.preventDefault();
-          closeDropDown();
+          if (e.target instanceof HTMLElement) {
+            if (e.target.getAttribute('data-trigger-id') !== triggerId) {
+              e.preventDefault();
+              closeDropDown();
+            }
+          }
         }}
         className={optionsContainerClassName}
         align={align}

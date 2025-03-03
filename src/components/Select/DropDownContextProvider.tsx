@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useId } from 'react';
 import type { ObjectType } from './select.types';
 
 type DropDownContextType = {
@@ -8,6 +8,7 @@ type DropDownContextType = {
   openDropDown: () => void;
   closeDropDown: () => void;
   toggleDropDown: () => void;
+  triggerId: string;
 };
 
 const DropDownContext = createContext<DropDownContextType | null>(null);
@@ -20,7 +21,8 @@ export const DropDownContextProvider = ({
   ...props
 }: {
   children: React.ReactNode;
-} & Omit<DropDownContextType, 'toggleDropDown'>) => {
+} & Omit<DropDownContextType, 'toggleDropDown' | 'triggerId'>) => {
+  const triggerId = useId();
   const toggleDropDown = () => {
     if (isOpen) {
       closeDropDown();
@@ -30,7 +32,14 @@ export const DropDownContextProvider = ({
   };
   return (
     <DropDownContext.Provider
-      value={{ ...props, toggleDropDown, isOpen, openDropDown, closeDropDown }}
+      value={{
+        ...props,
+        toggleDropDown,
+        isOpen,
+        openDropDown,
+        closeDropDown,
+        triggerId,
+      }}
     >
       {children}
     </DropDownContext.Provider>

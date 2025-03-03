@@ -8,7 +8,7 @@ export type SelectTriggerProps = {
 };
 
 const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {
-  const { toggleDropDown } = useDropDownContext();
+  const { toggleDropDown, triggerId } = useDropDownContext();
   return (
     <PopoverPrimitive.Trigger
       className={cn({
@@ -17,6 +17,7 @@ const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {
       })}
       onClick={toggleDropDown}
       asChild={!!renderTrigger}
+      data-trigger-id={triggerId}
     >
       {renderTrigger ?? <span>SelectTrigger</span>}
     </PopoverPrimitive.Trigger>
