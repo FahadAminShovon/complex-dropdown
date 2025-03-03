@@ -3,12 +3,12 @@ import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Command } from 'cmdk';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { TRIGGER_ID_ATTRIBUTE } from '../constants';
 import { useDropDownContext } from './DropDownContextProvider';
 import NonVirtualDropdownItems from './NonVirtualDropdownItems';
 import VirtualDropdownItems from './VirtualDropdownItems';
 import { getFilterOptions } from './filterOptions';
 import { getFilterOptionsAsync } from './filterOptionsAsync';
-
 import type {
   AllowSelectAllProps,
   DropDownDataType,
@@ -16,7 +16,6 @@ import type {
   DropDownItemsWrapperProps,
   ObjectType,
 } from './select.types';
-
 const DropDownItemsWrapper = <
   TData extends ObjectType,
   TOption extends DropDownDataType<TData>,
@@ -44,13 +43,12 @@ const DropDownItemsWrapper = <
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState<TOption[]>(options);
-  const { menu, triggerId } = useDropDownContext();
+  const { menu, triggerId, closeDropDown } = useDropDownContext();
   const [debouncedSearch] = useDebounce(
     search,
     props.search ? props.debounceTime || 0 : 0,
   );
   const deferredSearch = useDeferredValue(debouncedSearch);
-  const { closeDropDown } = useDropDownContext();
 
   const searchKeysString = (() => {
     if (props.search) {
@@ -133,7 +131,7 @@ const DropDownItemsWrapper = <
         sideOffset={align === 'center' ? 5 : 2}
         onPointerDownOutside={(e) => {
           if (e.target instanceof HTMLElement) {
-            if (e.target.getAttribute('data-trigger-id') !== triggerId) {
+            if (e.target.getAttribute(TRIGGER_ID_ATTRIBUTE) !== triggerId) {
               e.preventDefault();
               closeDropDown();
             }

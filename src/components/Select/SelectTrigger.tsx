@@ -1,6 +1,7 @@
 'use client';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { cn } from '../../../lib/utils';
+import { TRIGGER_ID_ATTRIBUTE } from '../constants';
 import { useDropDownContext } from './DropDownContextProvider';
 
 export type SelectTriggerProps = {
@@ -17,7 +18,7 @@ const SelectTrigger = ({ renderTrigger }: SelectTriggerProps) => {
       })}
       onClick={toggleDropDown}
       asChild={!!renderTrigger}
-      data-trigger-id={triggerId}
+      {...{ [TRIGGER_ID_ATTRIBUTE]: triggerId }}
     >
       {renderTrigger ?? <span>SelectTrigger</span>}
     </PopoverPrimitive.Trigger>
